@@ -1,0 +1,48 @@
+[project]
+name = "rag-podcast-backend"
+version = "0.1.0"
+description = "Podcast RAG agent backend"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "sqlalchemy[asyncio]",
+  "asyncpg",
+  "pgvector",
+  "feedparser",
+  "alembic",
+  "pydantic-settings",
+  "httpx",
+  "requests>=2.34.2",
+]
+
+[project.optional-dependencies]
+transcription = ["whisperx", "torch", "torchaudio", "ctranslate2", "faster-whisper"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchaudio = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "types-requests>=2.33.0.20260712",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rag_podcast"]
