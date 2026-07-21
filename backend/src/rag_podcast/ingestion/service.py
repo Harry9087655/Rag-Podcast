@@ -36,31 +36,21 @@ async def ingest_podcast(
     downloads are isolated so one bad episode doesn't sink the rest
     (PLAN.md §5.4).
     """
+    rss_url = rss_url.strip()
     parsed = parse_feed(rss_url, max_episodes=max_episodes)
-
-    existing = await session.scalar(select(Podcast).where(Podcast.rss_url == rss_url))
-    if existing is not None:
-        episodes = (
-            await session.scalars(select(Episode).where(Episode.podcast_id == existing.id))
-        ).all()
-        return IngestResult(
-            podcast=existing,
-            episodes=list(episodes),
-            new_episodes=0,
-            skipped=0,
-            already_imported=True,
+    podcast = await session.scalar(select(Podcast).where(Podcast.rss_url == rss_url))
+    already_imported = podcast is not None
+    if podcast is None:
+        podcast = Podcast(
+            rss_url=rss_url,
+            name=parsed.name,
+            author=parsed.author,
+            cover_url=parsed.cover_url,
         )
+        session.add(podcast)
+        await session.flush()  # assigns podcast.id without committing yet
 
-    podcast = Podcast(
-        rss_url=rss_url,
-        name=parsed.name,
-        author=parsed.author,
-        cover_url=parsed.cover_url,
-    )
-    session.add(podcast)
-    await session.flush()  # assigns podcast.id without committing yet
-
-    existing_guids: set[str] = set(
+    existing_guids = set(
         (
             await session.scalars(
                 select(Episode.guid).where(Episode.podcast_id == podcast.id)
@@ -85,14 +75,14 @@ async def ingest_podcast(
 
     data_dir = Path(settings.data_dir)
     for episode in new_episodes:
-        await _download_episode(session, episode, podcast.id, data_dir)
+        await _download_episode(session, episode, podcast.id, podcast.name, data_dir)
 
     return IngestResult(
         podcast=podcast,
         episodes=new_episodes,
         new_episodes=len(new_episodes),
         skipped=skipped,
-        already_imported=False,
+        already_imported=already_imported,
     )
 
 
@@ -121,14 +111,14 @@ async def _insert_episode(
 
 
 async def _download_episode(
-    session: AsyncSession, episode: Episode, podcast_id: int, data_dir: Path
+    session: AsyncSession, episode: Episode, podcast_id: int, podcast_title: str, data_dir: Path
 ) -> None:
     try:
         path = download_audio(
             episode.enclosure_url,
             podcast_id=podcast_id,
             episode_id=episode.id,
-            episode_title=episode.title,
+            podcast_title=podcast_title,
             data_dir=data_dir,
         )
         episode.audio_local_path = str(path)

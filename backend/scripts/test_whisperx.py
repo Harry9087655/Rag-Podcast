@@ -2,18 +2,34 @@ import sys
 import torch 
 from pathlib import Path
 import whisperx
-import gc 
-from whisperx.diarize import DiarizationPipeline
+from rag_podcast.config import settings
+import asyncio
+from sqlalchemy import select
+from rag_podcast.db import async_session, get_session
+from rag_podcast.models.episode import Episode
+
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 compute_type = "float16"
-audio_path = Path(__file__).resolve().parent / "probe_sample.wav"
+# audio_path = Path(__file__).resolve().parent / "probe_sample.wav"
+
+
+async def get_audio_path(episode_id: int) -> str:
+    async with async_session() as session:
+        episode = await session.get(Episode, episode_id)
+        if episode is None:
+            raise ValueError(f"Episode with id {episode_id} not found")
+        return episode.audio_local_path
+
+
 def main() -> None:
     if device == "cuda":
         print(f"available GPU {torch.cuda.get_device_name()}")
     print(f"Loading WhisperX mode.......")
     model = whisperx.load_model("small", device, compute_type=compute_type)
     print("-------- Model is loaded -------")
+    audio_path = asyncio.run(get_audio_path(3))  # Replace 1 with the actual episode ID
+    print(f"Loading audio from {audio_path}.......")
     audio = whisperx.load_audio(audio_path)
     print(f"Audio {audio_path} is loaded")
     print("Transcribing.......")

@@ -41,10 +41,14 @@ def test_download_audio_success_extension_from_url(tmp_path, monkeypatch):
     patch_get(monkeypatch, response)
 
     dest = download_audio(
-        "http://example.com/ep1.mp3", podcast_id=1, episode_id=2, data_dir=tmp_path
+        "http://example.com/ep1.mp3",
+        podcast_id=1,
+        episode_id=2,
+        podcast_title="vergecast",
+        data_dir=tmp_path,
     )
 
-    assert dest == tmp_path / "1" / "2.mp3"
+    assert dest == tmp_path / "vergecast" / "1" / "2.mp3"
     assert dest.read_bytes() == b"hello world"
     assert response.closed
 
@@ -54,7 +58,11 @@ def test_download_audio_extension_from_content_type_when_url_has_none(tmp_path, 
     patch_get(monkeypatch, response)
 
     dest = download_audio(
-        "http://example.com/stream?id=abc", podcast_id=1, episode_id=2, data_dir=tmp_path
+        "http://example.com/stream?id=abc",
+        podcast_id=1,
+        episode_id=2,
+        podcast_title="vergecast",
+        data_dir=tmp_path,
     )
 
     assert dest.suffix == ".m4a"
@@ -65,7 +73,11 @@ def test_download_audio_falls_back_to_default_extension(tmp_path, monkeypatch):
     patch_get(monkeypatch, response)
 
     dest = download_audio(
-        "http://example.com/stream?id=abc", podcast_id=1, episode_id=2, data_dir=tmp_path
+        "http://example.com/stream?id=abc",
+        podcast_id=1,
+        episode_id=2,
+        podcast_title="vergecast",
+        data_dir=tmp_path,
     )
 
     assert dest.suffix == downloader.DEFAULT_EXTENSION
@@ -75,9 +87,15 @@ def test_download_audio_creates_podcast_subdirectory(tmp_path, monkeypatch):
     response = FakeResponse([b"data"])
     patch_get(monkeypatch, response)
 
-    download_audio("http://example.com/ep1.mp3", podcast_id=42, episode_id=1, data_dir=tmp_path)
+    download_audio(
+        "http://example.com/ep1.mp3",
+        podcast_id=42,
+        episode_id=1,
+        podcast_title="vergecast",
+        data_dir=tmp_path,
+    )
 
-    assert (tmp_path / "42").is_dir()
+    assert (tmp_path / "vergecast" / "42").is_dir()
 
 
 def test_download_audio_raises_on_http_error(tmp_path, monkeypatch):
@@ -85,9 +103,15 @@ def test_download_audio_raises_on_http_error(tmp_path, monkeypatch):
     patch_get(monkeypatch, response)
 
     with pytest.raises(DownloadError):
-        download_audio("http://example.com/ep1.mp3", podcast_id=1, episode_id=2, data_dir=tmp_path)
+        download_audio(
+            "http://example.com/ep1.mp3",
+            podcast_id=1,
+            episode_id=2,
+            podcast_title="vergecast",
+            data_dir=tmp_path,
+        )
 
-    assert not (tmp_path / "1").exists()
+    assert not (tmp_path / "vergecast" / "1").exists()
 
 
 def test_download_audio_raises_on_connection_error(tmp_path, monkeypatch):
@@ -97,7 +121,13 @@ def test_download_audio_raises_on_connection_error(tmp_path, monkeypatch):
     monkeypatch.setattr(requests.Session, "get", fake_get)
 
     with pytest.raises(DownloadError):
-        download_audio("http://example.com/ep1.mp3", podcast_id=1, episode_id=2, data_dir=tmp_path)
+        download_audio(
+            "http://example.com/ep1.mp3",
+            podcast_id=1,
+            episode_id=2,
+            podcast_title="vergecast",
+            data_dir=tmp_path,
+        )
 
 
 def test_download_audio_cleans_up_partial_file_on_write_error(tmp_path, monkeypatch):
@@ -105,6 +135,12 @@ def test_download_audio_cleans_up_partial_file_on_write_error(tmp_path, monkeypa
     patch_get(monkeypatch, response)
 
     with pytest.raises(DownloadError):
-        download_audio("http://example.com/ep1.mp3", podcast_id=1, episode_id=2, data_dir=tmp_path)
+        download_audio(
+            "http://example.com/ep1.mp3",
+            podcast_id=1,
+            episode_id=2,
+            podcast_title="vergecast",
+            data_dir=tmp_path,
+        )
 
-    assert not (tmp_path / "1" / "2.mp3").exists()
+    assert not (tmp_path / "vergecast" / "1" / "2.mp3").exists()

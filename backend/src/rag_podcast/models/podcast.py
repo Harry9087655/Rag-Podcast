@@ -11,3 +11,4 @@ class Podcast(Base):
     name: Mapped[str]
     author: Mapped[str | None]
     cover_url: Mapped[str | None]
+   
