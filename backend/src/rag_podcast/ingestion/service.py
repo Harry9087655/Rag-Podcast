@@ -121,7 +121,7 @@ async def _download_episode(
             podcast_title=podcast_title,
             data_dir=data_dir,
         )
-        episode.audio_local_path = str(path)
+        episode.audio_local_path = str(path.relative_to(data_dir))
         episode.transcript_status = TranscriptStatus.DOWNLOADED
     except DownloadError:
         logger.exception("Failed to download audio for episode id=%s", episode.id)
