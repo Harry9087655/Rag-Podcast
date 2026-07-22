@@ -41,6 +41,14 @@ The `ingestion/` package (`backend/src/rag_podcast/ingestion/`) is organized by 
 - `service.py` — orchestrates the stages plus DB writes (`ingest_podcast`).
 - `router.py` — the FastAPI surface; wires request fields to `service.py` calls and maps stage-specific exceptions to HTTP responses.
 
+The `transcription/` package (`backend/src/rag_podcast/transcription/`) follows the same stage-module pattern:
+
+- `transcriber.py` — `Transcriber` Protocol (async, swappable backends) + `LocalWhisperX` implementation wrapping the `whisperx` library via `asyncio.to_thread()`.
+- `worker.py` — orchestrates the poll→claim→transcribe→store loop (`transcribe_episode`, `run_worker`). Imports `models/episode.py` and `transcriber.py` but not `whisperx` directly.
+- `__init__.py` — guarded re-exports with `try/except ImportError` so the module can be imported in the API container (Docker, no GPU/whisperx) without crashing.
+
+The worker entry point (`backend/scripts/run_transcription_worker.py`) runs standalone on the host for GPU access — it is not imported by the API process.
+
 When adding a new external integration (a new source, a new lookup/resolution step, etc.), add a new stage module rather than growing `service.py` or `router.py` directly — each module owns its own error type (see `.trellis/spec/backend/error-handling.md`) and, if it makes HTTP calls, its own `requests.Session` with retry/backoff (mirror `downloader.py`'s `_build_session`).
 
 ---

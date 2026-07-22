@@ -12,7 +12,7 @@ Each ingestion sub-step (feed fetch/parse, audio download, external ID resolutio
 
 ## Error Types
 
-One exception class per ingestion sub-step, always a direct `Exception` subclass with only a docstring (no custom fields) — see `FeedParseError` (`ingestion/parser.py`), `DownloadError` (`ingestion/downloader.py`), `AppleResolutionError` (`ingestion/apple_podcasts.py`). Adding a new external integration or parsing stage should follow this same one-class-per-stage pattern rather than reusing an existing error type across unrelated stages.
+One exception class per ingestion sub-step, always a direct `Exception` subclass with only a docstring (no custom fields) — see `FeedParseError` (`ingestion/parser.py`), `DownloadError` (`ingestion/downloader.py`), `AppleResolutionError` (`ingestion/apple_podcasts.py`). The transcription module follows the same pattern with `TranscribeError` (`transcription/transcriber.py`). Adding a new external integration or parsing stage should follow this same one-class-per-stage pattern rather than reusing an existing error type across unrelated stages.
 
 ---
 
@@ -20,6 +20,7 @@ One exception class per ingestion sub-step, always a direct `Exception` subclass
 
 - **Request-level failure → let it propagate.** `parse_feed`/`resolve_apple_podcasts_url` raise directly; the router's `except` clauses are the only place these are caught (see API Error Responses below). Service-layer functions do not swallow these.
 - **Per-item failure → isolate and continue.** `service._insert_episode` wraps a single episode insert in `session.begin_nested()` and catches broadly, logging via `logger.exception` and returning `None` so the caller marks it `skipped` instead of aborting the batch. `service._download_episode` similarly catches only `DownloadError` around a single episode's download and marks that episode `TranscriptStatus.FAILED` rather than failing the request.
+- **Worker per-episode failure → mark FAILED, continue polling.** `worker.transcribe_episode` wraps the entire transcribe→store flow in `try/except Exception`, setting `transcript_status = FAILED` and logging the traceback. The worker loop continues to the next episode — one bad audio file or model crash never stops the worker. Only DB connection failures are allowed to propagate (the worker can't function without the DB, so it should crash and let the process manager restart it).
 - **External HTTP calls → dedicated session with retry, translated errors.** Any module calling out to a third-party HTTP API builds its own `requests.Session` with `HTTPAdapter(max_retries=Retry(...))` for transient 429/5xx (see `downloader.py:_build_session`, mirrored in `apple_podcasts.py`), and wraps the call in `try/except requests.RequestException` to re-raise as that module's own error type — callers should never see a raw `requests` exception.
 
 ---
