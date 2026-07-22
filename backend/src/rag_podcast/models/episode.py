@@ -2,6 +2,7 @@ import enum
 from datetime import datetime
 
 from sqlalchemy import Enum, ForeignKey, UniqueConstraint
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from . import Base
@@ -31,3 +32,4 @@ class Episode(Base):
         Enum(TranscriptStatus, values_callable=lambda enum_cls: [e.value for e in enum_cls]),
         default=TranscriptStatus.PENDING,
     )
+    transcript_data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)

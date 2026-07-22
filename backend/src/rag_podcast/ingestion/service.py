@@ -49,6 +49,12 @@ async def ingest_podcast(
         )
         session.add(podcast)
         await session.flush()  # assigns podcast.id without committing yet
+    else:
+        # Re-parse may have corrected previously-missing metadata (e.g. a
+        # failed first attempt due to UA blacklisting — see parser.py).
+        podcast.name = parsed.name
+        podcast.author = parsed.author
+        podcast.cover_url = parsed.cover_url
 
     existing_guids = set(
         (

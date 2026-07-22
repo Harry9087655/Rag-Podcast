@@ -30,5 +30,11 @@ class Settings(BaseSettings):
     llm_api_key: str
     llm_model: str
 
+    # WhisperX transcription settings
+    whisperx_model: str = "small"
+    whisperx_device: str = "cuda"
+    whisperx_compute_type: str = "float16"
+    worker_poll_interval: int = 10
+
 
 settings = Settings()

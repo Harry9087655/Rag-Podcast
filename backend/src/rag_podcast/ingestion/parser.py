@@ -7,6 +7,10 @@ import feedparser
 
 AUDIO_EXTENSIONS = (".mp3", ".m4a", ".mp4", ".ogg", ".opus", ".wav", ".aac")
 
+# Some RSS hosts (e.g. xyzfm.space / 小宇宙) blacklist Python's default
+# urllib User-Agent and return 403. A browser-like UA keeps us off the list.
+FEEDPARSER_USER_AGENT = "Mozilla/5.0 (compatible; rag-podcast/1.0)"
+
 
 class FeedParseError(Exception):
     """Raised when a feed URL can't be fetched or contains no usable data."""
@@ -41,7 +45,7 @@ def parse_feed(rss_url: str, max_episodes: int = 1, target_guid: str | None = No
     FeedParseError if none does) — used for Apple Podcasts episode-level
     resolution, where the feed's own guid is authoritative.
     """
-    feed = feedparser.parse(rss_url)
+    feed = feedparser.parse(rss_url, agent=FEEDPARSER_USER_AGENT)
 
     if not feed.entries and not feed.feed:
         raise FeedParseError(f"Could not fetch or parse feed: {rss_url}")

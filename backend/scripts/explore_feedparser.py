@@ -12,10 +12,11 @@ from pprint import pprint
 
 import feedparser
 
+DOWNLOAD_USER_AGENT = "Mozilla/5.0 (compatible; rag-podcast/1.0)"
 
 def explore_feed(url: str) -> None:
     print(f"Fetching: {url}\n")
-    feed = feedparser.parse(url)
+    feed = feedparser.parse(url, agent=DOWNLOAD_USER_AGENT)
 
     # --- Did it work? ---
     if feed.bozo:
@@ -68,7 +69,7 @@ def explore_feed(url: str) -> None:
 
     for i, entry in enumerate(feed.entries[:5]):
         print(f"\n--- Episode {i + 1} ---")
-        print(f"  title:           {entry.get('title')}")
+        print(f"  title:           {entry.get('title', "")}")
         print(f"  guid:            {entry.get('id') or entry.get('guid')}")
         print(f"  link:            {entry.get('link')}")
         print(f"  published:       {entry.get('published')}")

@@ -10,6 +10,7 @@ from urllib3.util.retry import Retry
 CHUNK_SIZE = 1024 * 1024  # 1 MiB
 
 KNOWN_EXTENSIONS = (".mp3", ".m4a", ".mp4", ".ogg", ".opus", ".wav", ".aac")
+DOWNLOAD_USER_AGENT = "Mozilla/5.0 (compatible; rag-podcast/1.0)"
 EXTENSION_BY_MIME = {
     "audio/mpeg": ".mp3",
     "audio/mp3": ".mp3",
@@ -72,6 +73,7 @@ def _build_session() -> requests.Session:
         allowed_methods=["GET"],
     )
     session = requests.Session()
+    session.headers["User-Agent"] = DOWNLOAD_USER_AGENT
     session.mount("http://", HTTPAdapter(max_retries=retry))
     session.mount("https://", HTTPAdapter(max_retries=retry))
     return session
