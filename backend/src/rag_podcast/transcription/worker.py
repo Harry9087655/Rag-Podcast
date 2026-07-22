@@ -14,6 +14,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from ..models.episode import Episode, TranscriptStatus
+from ..models.podcast import Podcast
 from .transcriber import TranscribeError, Transcriber
 
 logger = logging.getLogger(__name__)

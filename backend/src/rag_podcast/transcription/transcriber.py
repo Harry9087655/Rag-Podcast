@@ -55,6 +55,26 @@ class Transcriber(Protocol):
         ...
 
 
+def create_transcriber(
+    model: str,
+    device: str,
+    compute_type: str,
+    *,
+    batch_size: int = 8,
+) -> Transcriber:
+    """Factory: return the right Transcriber based on configuration.
+
+    Currently only ``LocalWhisperX`` exists.  When ``WhisperXAPI`` is added,
+    this is the single place to branch (e.g. on a ``whisperx_api_url`` setting).
+    """
+    return LocalWhisperX(
+        model=model,
+        device=device,
+        compute_type=compute_type,
+        batch_size=batch_size,
+    )
+
+
 class LocalWhisperX:
     """Wraps the local whisperx library.
 
