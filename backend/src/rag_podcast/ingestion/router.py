@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db import get_session
 from ..models.episode import TranscriptStatus
+from .apple_podcasts import AppleResolutionError, is_apple_podcasts_url, resolve_apple_podcasts_url
 from .parser import FeedParseError
 from .service import ingest_podcast
 
@@ -44,8 +45,21 @@ class IngestResponse(BaseModel):
 async def create_podcast(
     body: IngestRequest, session: AsyncSession = Depends(get_session)
 ) -> IngestResponse:
+    rss_url = body.rss_url
+    target_guid = None
+
+    if is_apple_podcasts_url(rss_url):
+        try:
+            resolved = resolve_apple_podcasts_url(rss_url)
+        except AppleResolutionError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        rss_url = resolved.feed_url
+        target_guid = resolved.target_guid
+
     try:
-        result = await ingest_podcast(session, body.rss_url, max_episodes=body.max_episodes)
+        result = await ingest_podcast(
+            session, rss_url, max_episodes=body.max_episodes, target_guid=target_guid
+        )
     except FeedParseError as exc:
         # Feed fetch/parse failure aborts the whole ingestion (PLAN.md §5.4)
         # — surfaced as a 400 since the client passed a bad/unreachable URL.

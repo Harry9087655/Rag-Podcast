@@ -27,9 +27,30 @@ def make_parsed_podcast(episodes, name="Test Podcast"):
     return ParsedPodcast(name=name, author="Jane Doe", cover_url=None, episodes=episodes)
 
 
+async def test_ingest_podcast_passes_target_guid_to_parse_feed(db_session, monkeypatch, tmp_path):
+    parsed = make_parsed_podcast([make_parsed_episode("ep-1")])
+    captured = {}
+
+    def fake_parse_feed(url, max_episodes, target_guid=None):
+        captured["url"] = url
+        captured["max_episodes"] = max_episodes
+        captured["target_guid"] = target_guid
+        return parsed
+
+    monkeypatch.setattr(service, "parse_feed", fake_parse_feed)
+
+    downloaded = tmp_path / "audio.mp3"
+    downloaded.write_bytes(b"data")
+    monkeypatch.setattr(service, "download_audio", lambda *a, **kw: downloaded)
+
+    await ingest_podcast(db_session, "http://feed.example.com/rss", max_episodes=10, target_guid="guid-abc")
+
+    assert captured["target_guid"] == "guid-abc"
+
+
 async def test_ingest_podcast_creates_podcast_and_downloads_episodes(db_session, monkeypatch, tmp_path):
     parsed = make_parsed_podcast([make_parsed_episode("ep-1"), make_parsed_episode("ep-2")])
-    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes: parsed)
+    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes, target_guid=None: parsed)
 
     downloaded = tmp_path / "audio.mp3"
     downloaded.write_bytes(b"data")
@@ -52,7 +73,7 @@ async def test_ingest_podcast_creates_podcast_and_downloads_episodes(db_session,
 
 async def test_ingest_podcast_already_imported_skips_reinsertion(db_session, monkeypatch):
     first_parsed = make_parsed_podcast([make_parsed_episode("ep-1")])
-    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes: first_parsed)
+    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes, target_guid=None: first_parsed)
     monkeypatch.setattr(service, "download_audio", lambda *a, **kw: Path("/tmp/fake.mp3"))
 
     first = await ingest_podcast(db_session, "http://feed.example.com/rss", max_episodes=10)
@@ -60,7 +81,7 @@ async def test_ingest_podcast_already_imported_skips_reinsertion(db_session, mon
     assert first.new_episodes == 1
 
     second_parsed = make_parsed_podcast([make_parsed_episode("ep-1"), make_parsed_episode("ep-2")])
-    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes: second_parsed)
+    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes, target_guid=None: second_parsed)
 
     second = await ingest_podcast(db_session, "http://feed.example.com/rss", max_episodes=10)
 
@@ -74,7 +95,7 @@ async def test_ingest_podcast_already_imported_skips_reinsertion(db_session, mon
 
 async def test_ingest_podcast_duplicate_guid_within_same_feed_is_skipped(db_session, monkeypatch):
     parsed = make_parsed_podcast([make_parsed_episode("dup-guid"), make_parsed_episode("dup-guid")])
-    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes: parsed)
+    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes, target_guid=None: parsed)
     monkeypatch.setattr(service, "download_audio", lambda *a, **kw: Path("/tmp/fake.mp3"))
 
     result = await ingest_podcast(db_session, "http://feed.example.com/rss", max_episodes=10)
@@ -92,7 +113,7 @@ async def test_ingest_podcast_duplicate_guid_within_same_feed_is_skipped(db_sess
 
 async def test_ingest_podcast_marks_episode_failed_on_download_error(db_session, monkeypatch):
     parsed = make_parsed_podcast([make_parsed_episode("ep-1")])
-    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes: parsed)
+    monkeypatch.setattr(service, "parse_feed", lambda url, max_episodes, target_guid=None: parsed)
 
     def failing_download(*a, **kw):
         raise DownloadError("network blew up")
@@ -111,7 +132,7 @@ async def test_ingest_podcast_marks_episode_failed_on_download_error(db_session,
 
 
 async def test_ingest_podcast_propagates_feed_parse_error(db_session, monkeypatch):
-    def raise_parse_error(url, max_episodes):
+    def raise_parse_error(url, max_episodes, target_guid=None):
         raise FeedParseError("unreachable feed")
 
     monkeypatch.setattr(service, "parse_feed", raise_parse_error)

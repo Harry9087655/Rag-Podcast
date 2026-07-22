@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 
 from rag_podcast.db import get_session
 from rag_podcast.ingestion import router as router_module
+from rag_podcast.ingestion.apple_podcasts import AppleResolutionError, ResolvedApplePodcast
 from rag_podcast.ingestion.parser import FeedParseError
 from rag_podcast.ingestion.service import IngestResult
 from rag_podcast.main import app
@@ -49,7 +50,7 @@ def make_result(new_episodes=1, skipped=0, already_imported=False):
 def test_create_podcast_success(client, monkeypatch):
     result = make_result()
 
-    async def fake_ingest(session, rss_url, max_episodes):
+    async def fake_ingest(session, rss_url, max_episodes, target_guid=None):
         return result
 
     monkeypatch.setattr(router_module, "ingest_podcast", fake_ingest)
@@ -67,7 +68,7 @@ def test_create_podcast_success(client, monkeypatch):
 
 
 def test_create_podcast_feed_parse_error_returns_400(client, monkeypatch):
-    async def raise_parse_error(session, rss_url, max_episodes):
+    async def raise_parse_error(session, rss_url, max_episodes, target_guid=None):
         raise FeedParseError(f"Could not fetch or parse feed: {rss_url}")
 
     monkeypatch.setattr(router_module, "ingest_podcast", raise_parse_error)
@@ -81,7 +82,7 @@ def test_create_podcast_feed_parse_error_returns_400(client, monkeypatch):
 def test_create_podcast_defaults_max_episodes_to_one(client, monkeypatch):
     captured = {}
 
-    async def fake_ingest(session, rss_url, max_episodes):
+    async def fake_ingest(session, rss_url, max_episodes, target_guid=None):
         captured["max_episodes"] = max_episodes
         return make_result()
 
@@ -95,7 +96,7 @@ def test_create_podcast_defaults_max_episodes_to_one(client, monkeypatch):
 def test_create_podcast_passes_through_max_episodes(client, monkeypatch):
     captured = {}
 
-    async def fake_ingest(session, rss_url, max_episodes):
+    async def fake_ingest(session, rss_url, max_episodes, target_guid=None):
         captured["max_episodes"] = max_episodes
         return make_result()
 
@@ -104,3 +105,44 @@ def test_create_podcast_passes_through_max_episodes(client, monkeypatch):
     client.post("/podcasts", json={"rss_url": "http://feed.example.com/rss", "max_episodes": 20})
 
     assert captured["max_episodes"] == 20
+
+
+def test_create_podcast_resolves_apple_podcasts_url(client, monkeypatch):
+    captured = {}
+
+    def fake_resolve(url):
+        captured["resolved_input_url"] = url
+        return ResolvedApplePodcast(feed_url="http://feed.example.com/rss", target_guid="target-guid-123")
+
+    async def fake_ingest(session, rss_url, max_episodes, target_guid=None):
+        captured["rss_url"] = rss_url
+        captured["target_guid"] = target_guid
+        captured["max_episodes"] = max_episodes
+        return make_result()
+
+    monkeypatch.setattr(router_module, "resolve_apple_podcasts_url", fake_resolve)
+    monkeypatch.setattr(router_module, "ingest_podcast", fake_ingest)
+
+    apple_url = "https://podcasts.apple.com/us/podcast/some-show/id123456789?i=1000456789012"
+    response = client.post("/podcasts", json={"rss_url": apple_url, "max_episodes": 20})
+
+    assert response.status_code == 200
+    assert captured["resolved_input_url"] == apple_url
+    assert captured["rss_url"] == "http://feed.example.com/rss"
+    assert captured["target_guid"] == "target-guid-123"
+    # max_episodes is still passed through to ingest_podcast; it's target_guid
+    # that makes service.py/parser.py ignore it for episode-level ingestion.
+    assert captured["max_episodes"] == 20
+
+
+def test_create_podcast_apple_resolution_error_returns_400(client, monkeypatch):
+    def raise_resolution_error(url):
+        raise AppleResolutionError("iTunes Lookup returned no podcast results for collection id 123456789")
+
+    monkeypatch.setattr(router_module, "resolve_apple_podcasts_url", raise_resolution_error)
+
+    apple_url = "https://podcasts.apple.com/us/podcast/some-show/id123456789"
+    response = client.post("/podcasts", json={"rss_url": apple_url})
+
+    assert response.status_code == 400
+    assert "123456789" in response.json()["detail"]

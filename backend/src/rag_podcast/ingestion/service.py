@@ -26,7 +26,7 @@ class IngestResult:
 
 
 async def ingest_podcast(
-    session: AsyncSession, rss_url: str, max_episodes: int = 1
+    session: AsyncSession, rss_url: str, max_episodes: int = 1, target_guid: str | None = None
 ) -> IngestResult:
     """Parse a feed, store podcast/episode rows, download audio.
 
@@ -37,7 +37,7 @@ async def ingest_podcast(
     (PLAN.md §5.4).
     """
     rss_url = rss_url.strip()
-    parsed = parse_feed(rss_url, max_episodes=max_episodes)
+    parsed = parse_feed(rss_url, max_episodes=max_episodes, target_guid=target_guid)
     podcast = await session.scalar(select(Podcast).where(Podcast.rss_url == rss_url))
     already_imported = podcast is not None
     if podcast is None:

@@ -225,3 +225,37 @@ def test_parse_feed_missing_published_date_is_none():
 def test_parse_feed_raises_on_unparseable_input():
     with pytest.raises(FeedParseError):
         parse_feed("", max_episodes=10)
+
+
+def test_parse_feed_target_guid_match_returns_only_that_episode_ignoring_max_episodes():
+    items = "\n".join(
+        f"""
+        <item>
+          <title>Episode {i}</title>
+          <guid>ep-{i}</guid>
+          <enclosure url="http://example.com/ep{i}.mp3" type="audio/mpeg"/>
+        </item>
+        """
+        for i in range(5)
+    )
+    xml = make_feed(items)
+
+    result = parse_feed(xml, max_episodes=10, target_guid="ep-3")
+
+    assert len(result.episodes) == 1
+    assert result.episodes[0].guid == "ep-3"
+
+
+def test_parse_feed_target_guid_no_match_raises():
+    xml = make_feed(
+        """
+        <item>
+          <title>Episode 1</title>
+          <guid>ep-1-guid</guid>
+          <enclosure url="http://example.com/ep1.mp3" type="audio/mpeg"/>
+        </item>
+        """
+    )
+
+    with pytest.raises(FeedParseError):
+        parse_feed(xml, max_episodes=10, target_guid="does-not-exist")

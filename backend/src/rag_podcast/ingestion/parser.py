@@ -29,12 +29,17 @@ class ParsedPodcast:
     episodes: list[ParsedEpisode]
 
 
-def parse_feed(rss_url: str, max_episodes: int = 1) -> ParsedPodcast:
+def parse_feed(rss_url: str, max_episodes: int = 1, target_guid: str | None = None) -> ParsedPodcast:
     """Fetch and parse an RSS feed into podcast + episode metadata.
 
     Extracts every episode with a recognizable audio enclosure, then
     truncates to `max_episodes` — see PLAN.md §3.5 for why truncation
     happens after full extraction rather than during the feed loop.
+
+    If `target_guid` is given, `max_episodes` is ignored and the result
+    contains exactly the one episode whose guid matches (raising
+    FeedParseError if none does) — used for Apple Podcasts episode-level
+    resolution, where the feed's own guid is authoritative.
     """
     feed = feedparser.parse(rss_url)
 
@@ -64,11 +69,19 @@ def parse_feed(rss_url: str, max_episodes: int = 1) -> ParsedPodcast:
             )
         )
 
+    if target_guid is not None:
+        matches = [e for e in episodes if e.guid == target_guid]
+        if not matches:
+            raise FeedParseError(f"Episode with guid {target_guid} not found in feed: {rss_url}")
+        episodes = matches
+    else:
+        episodes = episodes[:max_episodes]
+
     return ParsedPodcast(
         name=name,
         author=author,
         cover_url=cover_url,
-        episodes=episodes[:max_episodes],
+        episodes=episodes,
     )
 
 
