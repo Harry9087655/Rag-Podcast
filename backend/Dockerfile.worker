@@ -1,0 +1,18 @@
+FROM python:3.12-slim
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /app
+
+COPY pyproject.toml uv.lock README.md ./
+COPY src ./src
+RUN uv sync --frozen --no-dev --extra transcription
+
+# whisperx.load_audio() shells out to the ffmpeg CLI (not just torchcodec's
+# bundled libs) — python:3.12-slim doesn't ship it.
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+CMD ["python", "-m", "rag_podcast.transcription.cli"]

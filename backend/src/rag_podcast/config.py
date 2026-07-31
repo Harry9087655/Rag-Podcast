@@ -8,7 +8,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=str(PROJECT_ROOT / ".env"))
+    # extra="ignore": .env holds infra-only keys the app doesn't consume
+    # (e.g. HOST_CACHE_DIR, read directly by docker-compose for the worker's
+    # model-cache bind mounts) alongside app settings. Without this,
+    # pydantic-settings' default extra="forbid" makes Settings() raise on
+    # any key in .env that isn't a declared field below.
+    model_config = SettingsConfigDict(
+        env_file=str(PROJECT_ROOT / ".env"), extra="ignore"
+    )
 
     data_dir: str
 

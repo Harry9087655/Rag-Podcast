@@ -68,6 +68,8 @@ podcast (播客/RSS feed)
 - `published_date`
 - `audio_local_path`（本地音频文件路径，前端跳转播放的目标）
 - `transcript_status` `[假设:枚举 pending/transcribing/done/failed，支撑断点续传]`
+- `language`（WhisperX 自动检测的语种，转录完成时写入；nullable——转录前或转录失败为空）
+- `index_status`（枚举 pending/processing/done/failed，语义与 `transcript_status` 相同但独立跟踪切片/embedding 阶段，支撑断点续传）
 
 **chunk**（项目地基，所有功能收敛于此）
 - `id`
@@ -77,6 +79,7 @@ podcast (播客/RSS feed)
 - `embedding`（向量）
 - `start` / `end`（秒，来自 WhisperX word-level 时间戳合并）
 - `speaker` `[假设:预留字段，MVP 不填自动值或仅存 "speaker_1/2"]`
+- `search_vector`（`tsvector`，从 `text` 生成的 DB generated column，GIN 索引；为未来 BM25/混合检索预留存储，本阶段只产出该列，检索/排序逻辑不在此阶段实现）
 
 > **设计铁律**：一切功能都是 chunk 表的推论——跳转靠 `start`，来源溯源靠 `podcast_id`+集信息，分组靠 `podcast_id`。此表设计错误会连累所有功能，实现前必须先定死。
 
@@ -154,6 +157,7 @@ RSS链接
 ### 已知风险
 - **转录是最大隐性成本**：单集 40–90 分钟，批量 = 成本 × 集数。口音、专业术语、语速会降低转录质量，直接拖累召回。缓解：本地 GPU（**已用 `nvidia-smi -L` 实测确认：RTX 5070 Ti Laptop，GB205 die，12GB GDDR7，60–115W TGP**——不是早先假设的桌面版 16GB）+ 异步任务 + 先小批量验证。笔记本功耗上限只有桌面同代卡的三分之一到一半，长音频批量转录更容易触发降频，M1 实测时应顺带记录单位时长转录耗时，供 M3 批量导入做时间预期。
 - **WhisperX 依赖链在 Blackwell 架构（本机 GPU 所属代际，compute capability sm_120）上的兼容性需 M1 实测验证，不能只信文档**：torch 对 sm_120 的官方稳定支持从 2.7.0 才开始（此前只有 nightly，且经常报 cuDNN DLL 缺失）；WhisperX 当前 pin `torch~=2.8.0`，需显式从 `download.pytorch.org/whl/cu128` 装 GPU 版，PyPI 默认解析到的是 CPU 版。更深一层的坑在 `ctranslate2`（WhisperX 实际做转录推理的引擎，是独立于 torch 的另一套 CUDA kernel，torch 支持 Blackwell 不代表它也支持）：RTX 50 系历史上在 int8 量化下会报 `CUBLAS_STATUS_NOT_SUPPORTED` 崩溃（[OpenNMT/CTranslate2#1865](https://github.com/OpenNMT/CTranslate2/issues/1865)），已在 4.6.2 修复（禁用 sm_120 上的 int8 路径），当前可解析到的 `ctranslate2==4.8.1` 高于修复版本；但 cuDNN 版本要求在官方文档里前后矛盾（一处说 ctranslate2≥4.5.0 要求 cuDNN 9 且不兼容 cuDNN 8，另一处又写"cuDNN 8 for CUDA 12.x"），不可信，必须实测。**M1 第一步动作建议**：装好 `transcription` extra 后，先跑一个几行的探针脚本，加载模型时显式传 `compute_type="float16"`（不要用默认 int8），验证真实 GPU 上能跑通，再动手搭后续管道。
+- **Windows+WSL2 部署前提：WSL2 默认内存上限不够 FunASR 加载**：转录 worker 已容器化为 `docker-compose.yml` 的 `worker` 服务（`backend/Dockerfile.worker`，装 `transcription` extra + `ffmpeg`，通过 `deploy.resources.reservations.devices` 拿 GPU）。FunASR 的 `AutoModel` 在同一进程里一次性加载三个模型（paraformer-large + VAD + punc-transformer），若 `.wslconfig` 没写 `memory=`，WSL2 默认只给宿主机内存的 50%——在 15.2GB 宿主机上约 7.6GB，不够用，会被 OOM kill（`docker events --filter event=oom` 可确认）。**修复**：在 `C:\Users\<you>\.wslconfig` 的 `[wsl2]` 段加 `memory=12GB`（或更高），然后 `wsl --shutdown` + 重启 Docker Desktop 使其生效；`docker info` 里的 `Total Memory` 应涨到对应值。仅 Windows+WSL2 宿主需要这一步，原生 Linux 不受此限制。
 - **chunk 与时间戳对齐是最易做砸处**：若按字符粗暴切分会丢失词级时间戳映射，跳转与来源全部失效。M1 必须先解决。
 - **清洗铁律（与时间戳对齐同为地基）**：任何文本清洗必须在词级时间戳列表 `[(word, start, end), ...]` 上操作——删词不影响其余词的时间戳；**严禁先拼成纯文本再做字符串清洗**，那会摧毁词与时间戳的对应关系，跳转全错位。另需决策：清洗版与原文若分开存（embedding 用清洗版、展示/跳转用原文），要保证两者能对齐回同一时间轴。
 - **评估无 ground truth**：靠 LLM 合成测试集（需强制改写措辞，避免字面匹配虚高）+ 少量人工标注。生成层 LLM-as-judge 结果需打折看待，检索层指标更可信。
@@ -166,3 +170,4 @@ RSS链接
 4. **异步转录方案**：轻量队列（如 RQ/Celery）还是"状态表 + 后台 worker"？倾向后者以避免过度工程，待定。
 5. **每个 RSS 默认导入多少集**：全部往期还是最近 N 集？`[假设:MVP 先限最近 10–20 集]`
 6. **时间戳对齐可接受误差**是多少（影响 M1 完成判定）？`[假设:±2 秒]`
+7. **Late chunking 已评估、暂不采用**：late chunking 需要 embedding 后端在 pooling 之前暴露 token-level 输出（整篇先编码，再按 chunk 边界 mean-pool），而当前 DeepInfra 托管的 BGE-M3 走标准 OpenAI 兼容 `/embeddings` 接口，只返回单一 pooled 向量，没有 token-level 输出。要拿到 token-level 输出，只能改用 Jina 的 API（目前唯一原生支持 `late_chunking` 参数的托管方案）或自托管 BGE-M3——两者都会重新打开 §3 已经做过的决定（embedding 选托管 API 正是为了避免第二个本地 GPU 依赖）。若未来重新评估"是否自托管 embedding"，可一并重新评估 late chunking。

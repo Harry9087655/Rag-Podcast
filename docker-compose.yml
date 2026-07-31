@@ -25,5 +25,37 @@ services:
       db:
         condition: service_healthy
 
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      DATA_DIR: /data
+    volumes:
+      - ./data:/data
+      # HOST_CACHE_DIR must be an absolute path to the host's cache root
+      # (parent of huggingface/modelscope/torch), set in .env. Deliberately
+      # NOT ${HOME}: docker compose reads .env directly for interpolation,
+      # independent of the invoking shell, so this avoids the
+      # HOME-vs-USERPROFILE split between Git Bash and native
+      # PowerShell/cmd.exe on Windows. See .env.example for the expected
+      # format per OS.
+      - ${HOST_CACHE_DIR}/huggingface:/root/.cache/huggingface
+      - ${HOST_CACHE_DIR}/modelscope:/root/.cache/modelscope
+      - ${HOST_CACHE_DIR}/torch:/root/.cache/torch
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   pgdata:

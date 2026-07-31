@@ -1,0 +1,1 @@
+{"file": "docker-compose.yml", "reason": "existing api service's DATABASE_URL/DATA_DIR override + ./data mount pattern the new worker service must replicate"}

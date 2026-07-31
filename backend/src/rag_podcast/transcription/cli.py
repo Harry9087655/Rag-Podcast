@@ -1,6 +1,9 @@
 """Transcription worker CLI.
 
-Run on the host (not inside Docker) to access GPU/CUDA::
+Runs as the ``worker`` service in ``docker-compose.yml`` (see
+``backend/Dockerfile.worker``), which has GPU access via
+``deploy.resources.reservations.devices``. Can also be run directly on the
+host for local debugging::
 
     uv run --extra transcription python -m rag_podcast.transcription.cli
 
@@ -69,6 +72,11 @@ async def _main() -> None:
         model=settings.whisperx_model,
         device=settings.whisperx_device,
         compute_type=settings.whisperx_compute_type,
+        funasr_model=settings.funasr_model,
+        funasr_vad_model=settings.funasr_vad_model,
+        funasr_punc_model=settings.funasr_punc_model,
+        funasr_device=settings.funasr_device,
+        lang_detect_window_seconds=settings.lang_detect_window_seconds,
     )
 
     data_dir = Path(settings.data_dir)
