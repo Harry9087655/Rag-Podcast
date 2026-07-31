@@ -19,7 +19,7 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       DATA_DIR: /data
-    volumes: ["./data:/data"]
+    volumes: ["./data:/data", "./backend/src:/app/src"]
     ports: ["8000:8000"]
     depends_on:
       db:
@@ -35,6 +35,7 @@ services:
       DATA_DIR: /data
     volumes:
       - ./data:/data
+      - ./backend/src:/app/src
       # HOST_CACHE_DIR must be an absolute path to the host's cache root
       # (parent of huggingface/modelscope/torch), set in .env. Deliberately
       # NOT ${HOME}: docker compose reads .env directly for interpolation,
