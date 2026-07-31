@@ -16,6 +16,13 @@ class TranscriptStatus(str, enum.Enum):
     FAILED = "failed"
 
 
+class IndexStatus(str, enum.Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    DONE = "done"
+    FAILED = "failed"
+
+
 class Episode(Base):
     __tablename__ = "episode"
     __table_args__ = (UniqueConstraint("guid", "podcast_id"),)
@@ -33,3 +40,8 @@ class Episode(Base):
         default=TranscriptStatus.PENDING,
     )
     transcript_data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    index_status: Mapped[IndexStatus] = mapped_column(
+        Enum(IndexStatus, values_callable=lambda enum_cls: [e.value for e in enum_cls]),
+        default=IndexStatus.PENDING,
+    )
+    language: Mapped[str | None]

@@ -1,5 +1,6 @@
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import ForeignKey, Text
+from sqlalchemy import Computed, ForeignKey, Text
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import Mapped, mapped_column
 
 from . import Base
@@ -16,3 +17,6 @@ class Chunk(Base):
     start: Mapped[float]
     end: Mapped[float]
     speaker: Mapped[str | None]
+    search_vector: Mapped[str] = mapped_column(
+        TSVECTOR, Computed("to_tsvector('english', text)", persisted=True)
+    )

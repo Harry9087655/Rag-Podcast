@@ -127,6 +127,7 @@ async def transcribe_episode(
         return
 
     episode.transcript_data = result
+    episode.language = result.get("language")
     episode.transcript_status = TranscriptStatus.DONE
     await session.commit()
     logger.info(

@@ -43,5 +43,16 @@ class Settings(BaseSettings):
     whisperx_compute_type: str = "float16"
     worker_poll_interval: int = 10
 
+    # FunASR (Chinese ASR) transcription settings
+    funasr_model: str = "paraformer-zh"
+    funasr_vad_model: str = "fsmn-vad"
+    funasr_punc_model: str = "ct-punc"
+    funasr_device: str = "cuda"
+    lang_detect_window_seconds: float = 30.0
+
+    # Indexing / chunking settings
+    chunk_min_duration_seconds: float = 20.0
+    chunk_max_duration_seconds: float = 90.0
+
 
 settings = Settings()

@@ -15,10 +15,11 @@ dependencies = [
   "pydantic-settings",
   "httpx",
   "requests>=2.34.2",
+  "tokenizers>=0.22.2",
 ]
 
 [project.optional-dependencies]
-transcription = ["whisperx", "torch", "torchaudio", "ctranslate2", "faster-whisper"]
+transcription = ["whisperx", "torch", "torchaudio", "ctranslate2", "faster-whisper", "funasr", "numba>=0.60"]
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }

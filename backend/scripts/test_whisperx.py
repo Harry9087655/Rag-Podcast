@@ -8,6 +8,7 @@ from sqlalchemy import select
 from rag_podcast.db import async_session, get_session
 from rag_podcast.models.episode import Episode
 from rag_podcast.config import settings
+import json
 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -30,7 +31,7 @@ def main() -> None:
     print(f"Loading WhisperX mode.......")
     model = whisperx.load_model("small", device, compute_type=compute_type)
     print("-------- Model is loaded -------")
-    audio_path = asyncio.run(get_audio_path(1))  # Replace 1 with the actual episode ID
+    audio_path = asyncio.run(get_audio_path(8))  # Replace 1 with the actual episode ID
     print(f"Loading audio from {audio_path}.......")
     audio = whisperx.load_audio(audio_path)
     print(f"Audio {audio_path} is loaded")
@@ -40,11 +41,22 @@ def main() -> None:
         print("Raw segments:", result['segments'][:50])
         model_a, metadata = whisperx.load_align_model(language_code=result["language"], device=device)
         result = whisperx.align(result["segments"], model_a, metadata, audio, device, return_char_alignments=False)
-        with open("aligned_segments.txt", "w") as f:
-            f.write(str(result["segments"]))
-        print("Transcription result written")
+        with open("./en_aligned_test.json", "w", encoding="utf-8") as f:
+            json.dump(to_native(result["segments"]), f, ensure_ascii=False)
+            print("Transcription result written")
     except Exception as e:
         print(f"Error occurred while aligning segments: {e}")
+def to_native(obj):
+    if isinstance(obj, dict):
+        return {k: to_native(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [to_native(v) for v in obj]
+    if hasattr(obj, "item"):  # numpy scalar
+        return obj.item()
+    return obj
+
+
+
 
 if __name__ == "__main__":
     main()
