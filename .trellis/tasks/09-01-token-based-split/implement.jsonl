@@ -1,0 +1,5 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file": ".trellis/tasks/09-01-token-based-split/design.md", "reason": "Technical design for this change: the counting convention, the offsets-based per-word prefix, and why the sweep's correctness argument transfers from time to tokens."}
+{"file": ".trellis/tasks/07-22-chunking/design.md", "reason": "Parent chunking design: the SizeBasedChunker section this change amends (pre-pass rationale, equal-share cut placement, ChunkSpan contract, audio_tier tiering)."}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Code standards and forbidden patterns the edited chunker must satisfy."}
+{"file": ".trellis/spec/backend/logging-guidelines.md", "reason": "The unsplittable-segment warning is kept and must match the project's log-level and message conventions."}
