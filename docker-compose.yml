@@ -58,5 +58,23 @@ services:
       db:
         condition: service_healthy
 
+  indexer:
+    build: ./backend
+    command: python -m rag_podcast.embedding.cli
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    volumes:
+      - ./backend/src:/app/src
+      # The BGE-M3 tokenizer caches into settings.hf_cache_dir (./.cache/hf),
+      # NOT ~/.cache/huggingface — unlike the worker's whisperx/funasr models.
+      # Mount the host's already-populated tokenizer cache so a container
+      # rebuild doesn't re-download it (R5).
+      - ./.cache/hf:/app/.cache/hf
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   pgdata:

@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from ..models.episode import Episode, TranscriptStatus
 from ..models.podcast import Podcast
-from .transcriber import TranscribeError, Transcriber
+from .BaseTranscriberInterface import TranscribeError, Transcriber
 
 logger = logging.getLogger(__name__)
 
@@ -129,6 +129,8 @@ async def transcribe_episode(
     episode.transcript_data = result
     episode.language = result.get("language")
     episode.transcript_status = TranscriptStatus.DONE
+    if episode.duration_seconds is None:
+        episode.duration_seconds = transcriber.get_audio_length_seconds()
     await session.commit()
     logger.info(
         "Episode id=%s transcribed successfully — %d segments.",

@@ -21,7 +21,7 @@ from pathlib import Path
 from rag_podcast.config import settings
 from rag_podcast.db import async_session
 try:
-    from rag_podcast.transcription.transcriber import create_transcriber
+    from rag_podcast.transcription.Transcriber import create_transcriber
     from rag_podcast.transcription.worker import run_worker
 except ImportError as exc:
     raise ImportError(

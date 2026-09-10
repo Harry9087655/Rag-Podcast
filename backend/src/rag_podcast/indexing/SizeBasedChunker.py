@@ -367,11 +367,13 @@ class SizeBasedChunker:
         # measured on the axis the bound is actually expressed in.
         #
         # Shares come from cum[-1], NOT from segment_tokens. The two differ
-        # whenever the segment's own text carries characters the word list
-        # does not (FunASR writes punctuation into text only), and a target
-        # derived from the larger number could sit past the end of cum, where
-        # the sweep would never bottom out on it. n_pieces above is free to
-        # use segment_tokens: it is a count, not a position.
+        # whenever the segment's own text carries characters the word list does
+        # not, and a target derived from the larger number could sit past the
+        # end of cum, where the sweep would never bottom out on it. Both
+        # transcribers now attach punctuation to their word tokens, so the gap
+        # is only leading/trailing whitespace — this stays defensive rather than
+        # load-bearing. n_pieces above is free to use segment_tokens: it is a
+        # count, not a position.
         cum = self._token_prefix(words)
         piece_tokens = cum[-1] / n_pieces
         tolerance = piece_tokens * PUNCTUATION_SNAP_RATIO

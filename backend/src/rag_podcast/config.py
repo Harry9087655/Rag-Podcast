@@ -19,7 +19,7 @@ class Settings(BaseSettings):
 
     data_dir: str
 
-    @field_validator("data_dir")
+    @field_validator("data_dir", "hf_cache_dir")
     @classmethod
     def resolve_data_dir(cls, v: str) -> str:
         path = Path(v)
@@ -50,9 +50,34 @@ class Settings(BaseSettings):
     funasr_device: str = "cuda"
     lang_detect_window_seconds: float = 30.0
 
+    # HuggingFace Hub settings
+    hf_cache_dir: str = "./.cache/hf"
+
+
     # Indexing / chunking settings
     chunk_min_duration_seconds: float = 20.0
-    chunk_max_duration_seconds: float = 90.0
+    chunk_max_duration_seconds: float = 360.0
+
+    # Audio tier settings
+    audio_tier: dict[str, dict[str, float]] = {"Short": {"max_episode_duration_seconds": 900,
+                                                         "min_chunk_tokens": 100,
+                                                         "max_chunk_tokens": 250,
+                                                         "desired_chunk_tokens": 175},
+                                                "Medium": {"max_episode_duration_seconds": 2700,
+                                                           "min_chunk_tokens": 150,
+                                                           "max_chunk_tokens": 400,
+                                                           "desired_chunk_tokens": 275},
+                                                "Long": {"max_episode_duration_seconds": float("inf"),  # no limit
+                                                         "min_chunk_tokens": 250,
+                                                         "max_chunk_tokens": 600,
+                                                         "desired_chunk_tokens": 425}
+                                                }
+
+    embedding_batch_size: int = 32
+    embedding_timeout_seconds: float = 60.0
 
 
 settings = Settings()
+
+if __name__ == "__main__":
+    print(settings.hf_cache_dir)

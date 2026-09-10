@@ -16,6 +16,7 @@ dependencies = [
   "httpx",
   "requests>=2.34.2",
   "tokenizers>=0.22.2",
+  "openai>=3.8.0",
 ]
 
 [project.optional-dependencies]
