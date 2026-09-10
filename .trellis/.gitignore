@@ -31,5 +31,3 @@
 **/__pycache__/
 **/*.pyc
 
-# trellis folder
-/.trellis/
