@@ -1,4 +1,0 @@
-{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
-{"file": ".trellis/tasks/09-01-token-based-split/prd.md", "reason": "Acceptance criteria to verify against, plus the explicit out-of-scope list (FunASR punctuation, _separator inversion, keyword-only *) that must NOT be fixed in passing."}
-{"file": ".trellis/tasks/09-01-token-based-split/implement.md", "reason": "Step-by-step plan with review gates and the validation commands the check must re-run."}
-{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Quality bar for the review pass."}

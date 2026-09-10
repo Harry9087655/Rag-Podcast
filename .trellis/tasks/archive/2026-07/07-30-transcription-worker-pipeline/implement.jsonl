@@ -1,2 +1,0 @@
-{"file": "spec.md", "reason": "GPU dependency chain (torch cu128, ctranslate2 sm_120 fix, Blackwell RTX 5070 Ti) pinned/host-validated here; also the explicit decision to prefer DB-poll status table over a task queue"}
-{"file": "backend/pyproject.toml", "reason": "transcription optional-dependency group + pytorch-cu128 index config that the worker Dockerfile must install via --extra transcription"}

@@ -1,1 +1,0 @@
-{"file": ".trellis/tasks/07-22-itunes-rss-resolver/research/itunes-lookup-api.md", "reason": "Verified live iTunes Lookup API behavior (episode lookup requires collection-id + limit=200 scan, episodeGuid matches RSS <guid> exactly, ~40-50 episode window cap) — the resolver implementation must follow this exact call shape, not the naive direct-episode-lookup approach."}

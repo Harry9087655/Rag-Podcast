@@ -1,4 +1,0 @@
-{"file": ".trellis/spec/backend/database-guidelines.md", "reason": "Documents the exact atomic-claim (UPDATE...WHERE...RETURNING), stale-PROCESSING-reset, and JSONB-attachment patterns this task's index_status column + indexing worker must replicate for episode."}
-{"file": ".trellis/spec/backend/error-handling.md", "reason": "Defines the per-episode try/except-then-FAILED worker pattern and one-exception-class-per-stage convention that indexing/embedder.py's EmbeddingError and the indexing worker must follow."}
-{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Establishes the stage-module package layout (transcriber.py/worker.py/__init__.py split) that indexing/ and cleaning/ should mirror."}
-{"file": ".trellis/tasks/07-22-chunking/design.md", "reason": "Task-specific technical design: module contracts (clean_words, build_chunks, embed_batch, replace_chunks), chunking algorithm, and migration plan for this implementation."}
