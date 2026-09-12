@@ -48,6 +48,7 @@ async def replace_chunks(
         Chunk(
             episode_id=episode.id,
             podcast_id=episode.podcast_id,
+            language=episode.language or "en",
             text=span.text,
             embedding=embeddings[i],
             start=span.start,

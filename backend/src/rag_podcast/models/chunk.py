@@ -17,6 +17,12 @@ class Chunk(Base):
     start: Mapped[float]
     end: Mapped[float]
     speaker: Mapped[str | None]
+    language: Mapped[str]
     search_vector: Mapped[str] = mapped_column(
-        TSVECTOR, Computed("to_tsvector('english', text)", persisted=True)
+        TSVECTOR,
+        Computed(
+            "to_tsvector(CASE WHEN language = 'zh' THEN 'jiebacfg'::regconfig "
+            "ELSE 'english'::regconfig END, text)",
+            persisted=True,
+        ),
     )
