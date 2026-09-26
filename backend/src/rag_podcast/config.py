@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from typing import Literal
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -55,26 +55,42 @@ class Settings(BaseSettings):
 
 
     # Indexing / chunking settings
-    chunk_min_duration_seconds: float = 20.0
+    chunk_min_duration_seconds: float = 10.0
     chunk_max_duration_seconds: float = 360.0
 
-    # Audio tier settings
-    audio_tier: dict[str, dict[str, float]] = {"Short": {"max_episode_duration_seconds": 900,
-                                                         "min_chunk_tokens": 100,
-                                                         "max_chunk_tokens": 250,
-                                                         "desired_chunk_tokens": 175},
-                                                "Medium": {"max_episode_duration_seconds": 2700,
-                                                           "min_chunk_tokens": 150,
-                                                           "max_chunk_tokens": 400,
-                                                           "desired_chunk_tokens": 275},
-                                                "Long": {"max_episode_duration_seconds": float("inf"),  # no limit
-                                                         "min_chunk_tokens": 250,
-                                                         "max_chunk_tokens": 600,
-                                                         "desired_chunk_tokens": 425}
-                                                }
+    # Audio tier settings: per-duration-tier token budgets, split into leaf
+    # (the only embedded/retrieved unit) and parent (time-contiguous leaf merge)
+    # boundaries. Values are tunable defaults (see 09-17 design §3).
+    audio_tier: dict[str, dict[str, float | dict[str, float]]] = {
+        "Short": {  # ≤900s
+            "max_episode_duration_seconds": 900,
+            "leaf": {"min_tokens": 30, "desired_tokens": 45, "max_tokens": 60},
+            "parent": {"desired_tokens": 300, "max_tokens": 500},
+        },
+        "Medium": {  # ≤2700s
+            "max_episode_duration_seconds": 2700,
+            "leaf": {"min_tokens": 60, "desired_tokens": 100, "max_tokens": 150},
+            "parent": {"desired_tokens": 400, "max_tokens": 650},
+        },
+        "Long": {  # >2700s
+            "max_episode_duration_seconds": float("inf"),
+            "leaf": {"min_tokens": 150, "desired_tokens": 200, "max_tokens": 250},
+            "parent": {"desired_tokens": 520, "max_tokens": 800},
+        },
+    }
 
     embedding_batch_size: int = 32
     embedding_timeout_seconds: float = 60.0
+
+    retrieval_top_k: int = 5
+    retrieval_score_mode: Literal["distance", "similarity"] = "distance"
+    retrieval_candidate_multiplier: int = 3
+    auto_merge_threshold: int = 2
+
+    llm_max_context_tokens: int = 1000000
+    llm_response_reserve_tokens: int = 2048
+    llm_timeout_seconds: float = 120.0
+    qa_max_citations: int = 8  # Maximum number of transcript segments referenced by the LLM
 
 
 settings = Settings()
