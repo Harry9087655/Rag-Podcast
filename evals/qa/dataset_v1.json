@@ -1,0 +1,383 @@
+{
+  "dataset_name": "qa-eval-v1",
+  "dataset_version": "1",
+  "schema_version": "dataset_v1",
+  "cases": [
+    {
+      "id": "parameter_franchise_royalty_rate",
+      "tags": ["parameter", "single_fact"],
+      "critical": false,
+      "question": "What share of their sales do franchisees typically pay the brand owner in royalties?",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 1},
+      "gold_chunks": null,
+      "gold_segments": [{"start": 340.434, "end": 348.801}],
+      "reference_answer": "Brian Kalachi says franchisees pay a percentage of their sales as royalties, usually between 6% and 20%. In return they agree to follow the franchisor's instructions.",
+      "required_claims": ["Royalties are a percentage of the franchisee's sales", "Usually between 6% and 20%"]
+    },
+    {
+      "id": "temporal_taft_hartley_act",
+      "tags": ["temporal", "single_fact"],
+      "critical": false,
+      "question": "Which anti-labor law did the guest say franchising took off after, and what year was it passed?",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 1},
+      "gold_chunks": null,
+      "gold_segments": [{"start": 2208.064, "end": 2213.626}, {"start": 2221.089, "end": 2224.43}],
+      "reference_answer": "The Taft-Hartley Act of 1947. It stops workers from striking against or targeting the McDonald's corporation, so they can only target their immediate employer, and franchising took off after it was passed.",
+      "required_claims": ["Taft-Hartley Act", "Passed in 1947", "Franchising took off after it"]
+    },
+    {
+      "id": "parameter_franchise_contracts_coded",
+      "tags": ["parameter"],
+      "critical": true,
+      "question": "How many franchise contracts did Brian Kalachi hand-code for his research, and how long did it take him?",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 1},
+      "gold_chunks": [404],
+      "gold_segments": null,
+      "reference_answer": "About 10 years ago he read and hand-coded 530 franchise contracts covering hundreds of contract terms. It took him about 18 months, and the result was only a cross-section.",
+      "required_claims": ["530 contracts", "About 18 months", "Coded by hand"]
+    },
+    {
+      "id": "long_question_no_poach_washington",
+      "tags": ["single_fact", "long_question"],
+      "critical": false,
+      "question": "The guest mentioned a natural experiment involving a state and McDonald's no-poach agreements. Which state was it, what happened, and what did his research find about wages afterward?",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 1},
+      "gold_chunks": [399, 400],
+      "gold_segments": null,
+      "reference_answer": "Washington State entered a consent decree with McDonald's and several other chains to get rid of their no-poach agreements. Kalachi's research found a causal effect: once the agreements were removed, wages went up.",
+      "required_claims": ["Washington State", "Consent decree removed no-poach agreements at McDonald's and other chains", "Wages went up afterward (causal effect)"]
+    },
+    {
+      "id": "temporal_kakeya_paper_upload",
+      "tags": ["temporal", "parameter"],
+      "critical": false,
+      "question": "王虹和合作者是什么时候上传了证明三维挂谷猜想的论文？那篇论文有多少页？",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 2},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 1714.72, "end": 1715.98},
+        {"start": 1715.98, "end": 1718.56},
+        {"start": 1719.68, "end": 1725.36}
+      ],
+      "reference_answer": "2025年2月24日，王虹和扎尔（Zahl）上传了一篇127页的论文。论文彻底证明了三维挂谷集合的豪斯多夫维数和闵可夫斯基维数都是3。",
+      "required_claims": ["上传时间是2025年2月24日", "论文共127页", "合作者是扎尔（Zahl）", "证明三维挂谷集合的维数都是3"]
+    },
+    {
+      "id": "parameter_express_volume_2025",
+      "tags": ["parameter", "multi_hop"],
+      "critical": true,
+      "question": "2025年全国快递业务量是多少件？业务量增速和业务收入增速分别是多少？",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 2},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 4076.51, "end": 4080.66},
+        {"start": 4080.66, "end": 4082.52},
+        {"start": 4082.92, "end": 4083.7},
+        {"start": 4083.86, "end": 4088.02},
+        {"start": 4088.04, "end": 4089.22},
+        {"start": 4089.48, "end": 4089.72},
+        {"start": 4090.02, "end": 4091.32},
+        {"start": 4091.56, "end": 4092.7}
+      ],
+      "reference_answer": "2025年全国快递业务量是1989.5亿件，同比增长13.6%。快递业务收入只增长了6.5%，业务量增长明显快于收入增长，说明单件平均收入在下降。",
+      "required_claims": ["2025年快递业务量为1989.5亿件", "业务量同比增长13.6%", "业务收入增长6.5%", "业务量增长快于收入增长"]
+    },
+    {
+      "id": "ambiguity_eight_jiao",
+      "tags": ["ambiguity", "definition"],
+      "critical": false,
+      "question": "节目里说的“八毛钱”指的是什么？",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 2},
+      "gold_chunks": [512, 513],
+      "gold_segments": null,
+      "reference_answer": "在快递那段里，“八毛钱”有两种意思。一是“八毛发全国”，指2025年整治低价竞争时，部分产粮区出现过一票八毛钱左右的寄件报价，主要面向重量轻、货量特别大的客户。二是末端派送费，一些地区的单票派送收入从早年的一块左右降到了八毛甚至更低。",
+      "required_claims": ["一种是“八毛发全国”的低价寄件报价", "这种报价主要面向重量轻、货量大的客户", "另一种是末端单票派送费从约一块降到八毛甚至更低"]
+    },
+    {
+      "id": "parameter_sign_language_dataset_price",
+      "tags": ["single_fact", "parameter"],
+      "critical": false,
+      "question": "在 Mozilla 的数据交易平台上，标价最贵的那套巴西手语医疗视频数据有多长，卖多少钱？",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 2},
+      "gold_chunks": [530],
+      "gold_segments": null,
+      "reference_answer": "这套巴西手语医疗视频数据时长24.6个小时，标价3.15万美元（31,500美元），是三套数据里最贵的。数据由44名参与者用手语表达疾病症状、医疗术语、心理健康和临床交流等内容。",
+      "required_claims": ["时长为24.6小时", "标价3.15万美元", "由44名参与者录制", "挂在 Mozilla Data Collective 平台上"]
+    },
+    {
+      "id": "comparison_toast_payments_take_rate",
+      "tags": ["parameter", "comparison"],
+      "critical": true,
+      "question": "What net take rate does Toast earn on payments, and how does that compare with what most competitors charge?",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 3},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 829.693, "end": 834.838},
+        {"start": 843.746, "end": 850.292}
+      ],
+      "reference_answer": "Toast keeps about 49 basis points (roughly 50 cents on a $100 order) as its net payments take rate. Most competitors charge 75 to 125 basis points on a net gross-profit take-rate basis, so Toast is under-monetized relative to the space.",
+      "required_claims": ["Toast's net payments take rate is about 49 basis points (about 50 cents per $100 order)", "Most competitors charge about 75 to 125 basis points"]
+    },
+    {
+      "id": "parameter_toast_grow_price",
+      "tags": ["single_fact", "parameter"],
+      "critical": false,
+      "question": "How much does Toast Grow cost restaurants per month, and what revenue uplift have early users seen?",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 3},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 1468.346, "end": 1472.211},
+        {"start": 1473.412, "end": 1480.634}
+      ],
+      "reference_answer": "Toast Grow, Toast's automated AI marketing engine, costs about $500 a month. Over its first month or two of use, customers saw about an 8% uplift in total revenue.",
+      "required_claims": ["Toast Grow costs about $500 per month", "Early users saw about an 8% uplift in total revenue"]
+    },
+    {
+      "id": "definition_flywheel_market",
+      "tags": ["definition"],
+      "critical": false,
+      "question": "What does Toast's management mean by a 'flywheel market'?",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 3},
+      "gold_chunks": [604],
+      "gold_segments": null,
+      "reference_answer": "A flywheel market is a city where Toast reaches about 10% market share. At that point network effects take hold, the market standardizes on Toast, and its share gains accelerate rather than slow down.",
+      "required_claims": ["A flywheel market is reached when Toast hits about 10% market share in a city/market", "At that point network effects take hold and the market standardizes on Toast", "Market share then accelerates faster"]
+    },
+    {
+      "id": "comparison_toast_vs_doordash",
+      "tags": ["comparison", "long_question"],
+      "critical": false,
+      "question": "DoorDash has been piloting point-of-sale systems with restaurants. How did Toast put pressure on DoorDash's delivery business, and why does the guest think restaurants would not switch from Toast to DoorDash even if its POS were free?",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 3},
+      "gold_chunks": [591, 592],
+      "gold_segments": null,
+      "reference_answer": "About a year earlier, Toast started offering free delivery to restaurants through its ordering module in partnership with Uber Eats, and about 80,000 restaurants (half its base) have signed up. DoorDash takes a 13–15% delivery take rate, and all-in fees can reach 30% of an order. Switching from Toast to DoorDash would save only about 50 bps on payments in exchange for those much higher delivery fees, so the guest calls it economically irrational.",
+      "required_claims": ["Toast began offering free delivery (in partnership with Uber Eats) via its ordering module", "About 80,000 restaurants, roughly half of Toast's base, signed up for the ordering module", "DoorDash charges roughly a 13-15% take rate on deliveries (up to ~30% all-in fees)", "Switching would save only ~50 bps on payments, so the unit economics are non-rational"]
+    },
+    {
+      "id": "definition_taste_virtuous_consumption",
+      "tags": ["definition"],
+      "critical": false,
+      "question": "In his book on taste, how does Ruby Thelot define taste, and when does he say the question of taste first emerged?",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 5},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 1050.678, "end": 1061.729},
+        {"start": 1062.15, "end": 1066.033},
+        {"start": 1069.145, "end": 1075.986}
+      ],
+      "reference_answer": "In 'A Few Essays on Taste' (first essay: 'A Brief History of Taste'), he argues that taste is not just aesthetic preference but a way for people to consume virtuously. The question of taste emerged in the 17th century, when people needed guidance on how to consume properly.",
+      "required_claims": ["Taste is not just aesthetic preference", "Taste is a way for people to consume virtuously", "The question of taste emerged in the 17th century, when people needed guidance on how to consume properly"]
+    },
+    {
+      "id": "temporal_bill_of_rights_1688",
+      "tags": ["temporal", "single_fact"],
+      "critical": false,
+      "question": "In Ruby Thelot's history of taste, what year does he give for England's Bill of Rights, and what happened to the nobility as a result?",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 5},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 1076.766, "end": 1084.268},
+        {"start": 1084.868, "end": 1087.968}
+      ],
+      "reference_answer": "He says the Bill of Rights came in 1688 in England, after the Glorious Revolution, and it restrained the nobility's powers. As the nobility lost political power, it also lost cultural power, which left the vacuum in which the question of taste emerged.",
+      "required_claims": ["The Bill of Rights happened in 1688", "It came after the Glorious Revolution in England", "The nobility's powers were restrained, and they lost cultural as well as political power"]
+    },
+    {
+      "id": "near_entity_bot_traffic_source",
+      "tags": ["near_entity", "single_fact"],
+      "critical": false,
+      "question": "Ruby Thelot cites Akamai's figures on how much internet traffic is bots. What share does he give, and is Akamai actually the source?",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 5},
+      "gold_chunks": [749],
+      "gold_segments": null,
+      "reference_answer": "He does not cite Akamai. He cites Cloudflare's numbers from this year, which put about 50% of internet traffic as bots. He brings this up while discussing his essay on 'Machinic Taste'.",
+      "required_claims": ["The source is Cloudflare, not Akamai", "About 50% of internet traffic is bots"]
+    },
+    {
+      "id": "multi_hop_heteropessimism_ai_videos",
+      "tags": ["multi_hop", "long_question"],
+      "critical": false,
+      "question": "Ruby Thelot's firm checked whether 'heteropessimism' was really a growing trend in TikTok dating content. What did that analysis find, and how many videos about AI does the firm plan to analyze in a similar study of AI sentiment?",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 5},
+      "gold_chunks": [735, 791],
+      "gold_segments": null,
+      "reference_answer": "Looking at the top 2,000 dating videos over five years, the firm found that dating content is mostly positive and that heteropessimism has actually decreased over time; journalists were seeing it because of their own algorithms. For AI, R2S/131 plans to analyze about 5,000 videos to track positive versus negative sentiment over time, published as one of its indexes.",
+      "required_claims": ["Heteropessimism actually decreased over time in the top 2,000 dating videos across five years", "Dating content is mostly positive", "The firm plans to analyze about 5,000 videos on AI to measure sentiment"]
+    },
+    {
+      "id": "typo_mamdani_grocery_discount",
+      "tags": ["typo", "parameter"],
+      "critical": false,
+      "question": "How big is the grocery discount that NYC Mayor Mamdany is offering at his proposed city-owned grocery stores?",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 6},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 362.743, "end": 368.487},
+        {"start": 421.876, "end": 428.94}
+      ],
+      "reference_answer": "Mayor Mamdani's proposed city-owned grocery stores would offer a 30% discount on some basic groceries. He hopes it will help fight rising food prices.",
+      "required_claims": ["The discount is 30%", "It applies to some basic groceries (not everything)", "The goal is to battle rising food prices"]
+    },
+    {
+      "id": "long_question_usmca_review",
+      "tags": ["long_question", "temporal"],
+      "critical": false,
+      "question": "Trump once called a certain North American trade deal the fairest ever achieved and then talked about terminating it. What does its acronym USMCA stand for, and when the time came to renew it, what did he decide to do instead of simply renewing it?",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 6},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 332.604, "end": 335.785},
+        {"start": 336.245, "end": 344.328}
+      ],
+      "reference_answer": "USMCA stands for the US-Mexico-Canada Agreement. Trump declined to renew it and chose an annual review of the agreement for 10 more years instead.",
+      "required_claims": ["USMCA stands for the US-Mexico-Canada Agreement", "Trump declined to renew the agreement", "He opted for an annual review of the agreement for 10 more years"]
+    },
+    {
+      "id": "parameter_truth_social_early_access",
+      "tags": ["parameter", "single_fact"],
+      "critical": true,
+      "question": "How much is Truth Social charging investors for early access to Trump's posts, and how many firms have reportedly paid for it?",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 6},
+      "gold_chunks": [838, 840],
+      "gold_segments": null,
+      "reference_answer": "Truth Social charges up to $100,000 a month for early access to Trump's posts. According to the BBC, more than 10 firms have paid for it.",
+      "required_claims": ["The price is up to $100,000 a month", "The BBC reports that more than 10 firms have paid for it"]
+    },
+    {
+      "id": "definition_zero_click_web",
+      "tags": ["definition"],
+      "critical": false,
+      "question": "What is the term for a search that ends without the user ever clicking on a link, which is hurting digital publishers' traffic?",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 6},
+      "gold_chunks": [845, 846],
+      "gold_segments": null,
+      "reference_answer": "It is called the 'zero-click web'. These are searches where AI models summarize content right on the search page, so users never click through to publishers' sites.",
+      "required_claims": ["The term is 'zero-click web'", "It describes searches that end without the user clicking on a link"]
+    },
+    {
+      "id": "comparison_bond_long_short_yield",
+      "tags": ["parameter", "comparison"],
+      "critical": true,
+      "question": "根据SBBI年报的统计，过去二十一年中国长期国债和短期国债的年化收益分别大约是多少？",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 7},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 199.79, "end": 208.55},
+        {"start": 208.97, "end": 217.665}
+      ],
+      "reference_answer": "根据SBBI的统计，过去二十一年中国长期国债的年化收益大约是4.36%，短期国债大约是2.43%。",
+      "required_claims": ["长期国债过去21年年化收益约4.36%", "短期国债年化收益约2.43%"]
+    },
+    {
+      "id": "temporal_us_bonds_2022_drawdown",
+      "tags": ["temporal", "comparison"],
+      "critical": false,
+      "question": "节目里提到2022年美国利率上行时，美国长期债券那一年大概跌了多少？这说明利率上行对债券投资人意味着什么？",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 7},
+      "gold_chunks": null,
+      "gold_segments": [
+        {"start": 2085.53, "end": 2091.245},
+        {"start": 2091.49, "end": 2095.89},
+        {"start": 2096.05, "end": 2104.615},
+        {"start": 2105.01, "end": 2105.525}
+      ],
+      "reference_answer": "2022年美债利率开始上行时，美国长期债券那一年大约跌了15%到20%。这说明利率上行对债券投资人并不是好事，因为上行过程中资本利得是负的，债券价格会下跌。",
+      "required_claims": ["2022年美国长期债券大约跌了15%到20%", "利率上行时债券的资本利得为负、价格下跌"]
+    },
+    {
+      "id": "typo_bond_return_breakdown",
+      "tags": ["typo", "parameter"],
+      "critical": false,
+      "question": "中国长期国债过去二十一年4.36%的年化收益里，票息和债卷价格上涨分别贡献了多少？",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 7},
+      "gold_chunks": [860, 861],
+      "gold_segments": null,
+      "reference_answer": "在4.36%的总年化收益中，票息贡献约3.43%，是主要来源；由于过去二十一年利率持续下行、债券价格上涨，市场价格上涨（资本利得）贡献约0.89%。",
+      "required_claims": ["总年化收益约4.36%", "票息贡献约3.43%", "价格上涨（资本利得）贡献约0.89%", "价格上涨源于过去21年利率持续下行"]
+    },
+    {
+      "id": "single_fact_bond_equity_correlation",
+      "tags": ["single_fact", "comparison"],
+      "critical": true,
+      "question": "在SBBI年报第八章的相关系数图里，长期国债和A股整体的相关系数是多少？",
+      "expected_arm": "search",
+      "scope": {"podcast_id": 7},
+      "gold_chunks": [876],
+      "gold_segments": null,
+      "reference_answer": "长期国债和A股整体的相关系数是-0.54，是负相关但不是完全负相关；作为对比，大盘股和A股整体的相关系数是0.98。",
+      "required_claims": ["长期国债与A股整体的相关系数为-0.54", "两者是负相关"]
+    },
+    {
+      "id": "cross_document_ai_usage_studies",
+      "tags": ["cross_document", "multi_hop"],
+      "critical": false,
+      "question": "Two podcasts discussed large-scale studies of how people actually use AI. What did Google's AI Atlas report find about how widely and how deeply occupations use AI, and how many people did the Anthropic survey cited on the a16z Show cover?",
+      "expected_arm": "search",
+      "scope": {},
+      "gold_chunks": [481, 783],
+      "gold_segments": null,
+      "reference_answer": "Google's AI Atlas report found AI use to be broad but shallow: 68% of detailed occupations show AI use, but in those occupations AI touches only about 21% of tasks on average, and only 3% of occupations use AI in more than 75% of their tasks. The Anthropic survey cited by Ruby Thelot on the a16z Show covered 85,000 people.",
+      "required_claims": ["68% of occupations show AI use", "AI is involved in about 21% of tasks on average", "Only 3% of occupations use AI in more than 75% of tasks", "The Anthropic survey covered 85,000 people"]
+    },
+    {
+      "id": "cross_document_royalty_vs_take_rate",
+      "tags": ["cross_document", "comparison"],
+      "critical": false,
+      "question": "How does the cut a franchisor like McDonald's takes from its franchisees compare with the net payments take rate Toast earns on a restaurant's orders?",
+      "expected_arm": "search",
+      "scope": {},
+      "gold_chunks": [329, 574],
+      "gold_segments": null,
+      "reference_answer": "Franchisees pay the franchisor royalties of usually 6% to 20% of their sales (Odd Lots). Toast's net payments take rate is about 49 basis points, roughly 50 cents on a $100 order (Business Breakdowns), so the franchisor's cut is an order of magnitude larger.",
+      "required_claims": ["Franchise royalties are usually 6% to 20% of sales", "Toast's net payments take rate is about 49 basis points (about 50 cents per $100)", "The franchise royalty is far larger than Toast's take rate"]
+    },
+    {
+      "id": "no_knowledge_bitcoin_allocation",
+      "tags": ["no_knowledge"],
+      "critical": false,
+      "question": "这期节目里嘉宾怎么评价比特币在资产配置中的作用？",
+      "expected_arm": "full-context",
+      "scope": {"episode_id": 7},
+      "gold_chunks": null,
+      "gold_segments": null,
+      "reference_answer": "这期节目没有讨论比特币，资料中没有相关信息。",
+      "required_claims": []
+    },
+    {
+      "id": "no_knowledge_nvidia_earnings",
+      "tags": ["no_knowledge"],
+      "critical": false,
+      "question": "Which podcast discussed Nvidia's latest quarterly earnings, and what revenue figure did they mention?",
+      "expected_arm": "search",
+      "scope": {},
+      "gold_chunks": null,
+      "gold_segments": null,
+      "reference_answer": "None of the podcasts in the library discuss Nvidia's earnings, so there is no information on this.",
+      "required_claims": []
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "dataset_v1.schema.json",
+  "title": "rag-podcast QA eval dataset v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["dataset_name", "dataset_version", "schema_version", "cases"],
+  "properties": {
+    "dataset_name": { "const": "qa-eval-v1" },
+    "dataset_version": { "const": "1" },
+    "schema_version": { "const": "dataset_v1" },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/case" }
+    }
+  },
+  "definitions": {
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "tags",
+        "critical",
+        "question",
+        "expected_arm",
+        "scope",
+        "gold_chunks",
+        "gold_segments",
+        "reference_answer",
+        "required_claims"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "tags": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/tag" }
+        },
+        "critical": { "type": "boolean" },
+        "question": { "type": "string", "minLength": 1 },
+        "expected_arm": { "enum": ["full-context", "search"] },
+        "scope": { "$ref": "#/definitions/scope" },
+        "gold_chunks": {
+          "type": ["array", "null"],
+          "items": { "type": "integer" }
+        },
+        "gold_segments": {
+          "type": ["array", "null"],
+          "items": { "$ref": "#/definitions/gold_segment" }
+        },
+        "reference_answer": { "type": "string" },
+        "required_claims": { "type": "array", "items": { "type": "string" } },
+        "conflicts": { "type": "array", "items": { "type": "string" } }
+      },
+      "if": {
+        "properties": { "expected_arm": { "const": "full-context" } }
+      },
+      "then": {
+        "properties": { "scope": { "required": ["episode_id"] } }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "episode_id": { "type": "integer" },
+        "podcast_id": { "type": "integer" }
+      }
+    },
+    "gold_segment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "type": "number" },
+        "end": { "type": "number" }
+      }
+    },
+    "tag": {
+      "type": "string",
+      "enum": [
+        "single_fact",
+        "definition",
+        "parameter",
+        "cross_document",
+        "comparison",
+        "multi_hop",
+        "temporal",
+        "table",
+        "code",
+        "ambiguity",
+        "no_knowledge",
+        "near_entity",
+        "typo",
+        "long_question"
+      ]
+    }
+  }
+}
