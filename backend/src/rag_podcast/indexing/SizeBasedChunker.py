@@ -68,6 +68,14 @@ class SizeBasedChunker:
         """
         return len(self._tokenizer.encode(text, add_special_tokens=False).ids)
 
+    def count_tokens(self, text: str) -> int:
+        """Token count of *text* — the public face of ``_count``.
+
+        Exposed so the parent grouper can accumulate leaf token counts in the
+        same unit ``build_chunks`` measures its bounds in.
+        """
+        return self._count(text)
+
     def _token_prefix(self, words: list[dict]) -> list[int]:
         """Cumulative token counts over *words*: entry ``i`` covers ``words[:i]``.
 
@@ -198,10 +206,6 @@ class SizeBasedChunker:
                 token_counts.append(self._count(piece["text"]))
 
         chunks: list[ChunkSpan] = []
-        # Gate arithmetic runs on raw segment boundaries, not the
-        # word-derived ones _make_span produces — the two differ only by
-        # leading/trailing silence, and segment boundaries keep the bound
-        # checks working whether or not word-level alignment is present.
         buffer: list[dict] = []
         buffer_tokens = 0
 

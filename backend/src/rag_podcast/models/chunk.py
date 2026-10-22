@@ -12,6 +12,7 @@ class Chunk(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     episode_id: Mapped[int] = mapped_column(ForeignKey("episode.id"))
     podcast_id: Mapped[int] = mapped_column(ForeignKey("podcast.id"))
+    parent_id: Mapped[int | None] = mapped_column(ForeignKey("parent_chunk.id"), nullable=True)
     text: Mapped[str] = mapped_column(Text)
     embedding: Mapped[list[float]] = mapped_column(Vector(1024))
     start: Mapped[float]

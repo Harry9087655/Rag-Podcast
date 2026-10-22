@@ -1,0 +1,111 @@
+{
+   "chunk_id": 201,
+   "text": "From an investment standpoint, it's a very easy business to model and to predict, which is always nice for my seat. So you look at the five things that matter here. It's location count, payments, SaaS ARPU, margins and multiple. All of those things historically have been pretty relatively predictable. We like it from a predictability and modeling perspective as well. On your hardware point, does every customer have to have toast hardware? Is there anything that can run purely on their software? Every toast customer has to have the hardware. Toast, when you walk into a restaurant, you'll usually see some sort of payments dongle at the front desk. You might see some sort of bigger screen that the customer is using or the restaurant owners using. And then you have kitchen display and you have TOSCO handhelds for the waitstaff. Toast went down that road of building specialized hardware many, many years ago. It's funny because a lot of the competitors that came out over the years tried to leapfrog them and take the easy road, which was building an app and then asking their customers to just download the app on an iPad. Turns out iPads don't work very well in restaurants. They break all the time. They don't do well with water and liquid and heat. What was a shortcut at the beginning for some of those competitors actually led to their demise or made it so that they couldn't gain share. And in the end, the customers came back and said this hardware from toast is actually really powerful. It's purpose built for the restaurant and I wouldn't want to use anything else. Interesting as it relates to the SaaSpocalypse as well and how hardware makes a pretty big difference with some of these industries and particularly those that can use it for their updates and whatnot. So interesting to hear there. I totally agree with that. It's funny.",
+   "start": 1005.25,
+   "end": 1111.065,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.54500129818916,
+   "rerank_score": null
+}{
+   "chunk_id": 192,
+   "text": "This is Business Breakdowns. Business Breakdowns is a series of conversations with investors and operators diving deep into a single business. For each business, we explore its history, its business model, its competitive advantages, and what makes it tick. We believe every business has lessons and secrets that investors and operators can learn from. And we are here to bring them to you. To find more episodes of Breakdowns, check out JoinColossus.com. All opinions expressed by hosts and podcast guests are solely their own opinions. Hosts, podcast guests, their employers or affiliates may maintain positions in the securities discussed in this podcast. This podcast is for informational purposes only and should not be relied upon as a basis for investment decisions. This is Matt Russell and today we are breaking down Toast. My guest is Sean Barrett, founder and CIO at Counterglobal. Counterglobal manages a concentrated portfolio of businesses and developed markets. And you may recall Sean from an episode last year where we spoke about a name in the alternative asset manager space EQT. Today, we are here to cover a business in a completely different industry, and that is Toast. It's a wide-ranging discussion. I think a lot of people are wondering what software names are particularly interesting in this moment in time, and Shaw can get into that and much, much more. So please enjoy this episode. All right, Sean, it is great to have you back. Today, we are talking about Toast, which is a name that we previously covered, and we do like to revisit names when there are noteworthy things going on, maybe the stories changed a little bit, and I think we'll get into some of that here. But maybe we could just start off with a simple introduction to Toast for those that aren't familiar, and your own history with this business And what brought you to it, some of those dynamics, just to set the stage.",
+   "start": 3.695,
+   "end": 128.453,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.5687822103500335,
+   "rerank_score": null
+}{
+   "chunk_id": 195,
+   "text": "And then payments are a funny thing as far as being recurring in nature. They're definitely more volatile than contract-based business, but they also grow with inflation, they grow with GDP, and it's really aligned with the customer where their revenue becomes your revenue as well. There's a lot of nuance to these phrases or words and semantics, but it is helpful to understand exactly where that's coming from. And then I guess just in terms of revisiting it today, hearing the 18 times next year's gap earnings is surprising for a number when you reference those growth rates. But what else would you mention just in terms of where we are today and why it's worth bringing up and talking about? I think the business has really evolved in a way that makes it more attractive today even than it was a few years ago. But then I think from an evaluation perspective, no surprise to you, there's been a pretty severe debate in public markets around the SaaS apocalypse, SaaS is dead, narrative. While we think there is a lot of disruption out there in the software space, particularly around coding and DevOps in some cases, there are also a handful of category killers, vertical market winners, and infrastructure software companies that are thriving and in a better spot now because of AI than they were a few years ago. But it's important to touch on the SaaSpocalypse debate because we aren't blind to this. There's a real transformation in the market with AI. But when it comes to vertical market, multi-tenant SaaS, category killers, this actually rhymes with the movie that we lived through in 2015. I think we should talk about it for a minute. If you go back to 2014 or 15, open source had been around for a long time, but AWS started putting open source software on its platform and it became available to the masses.",
+   "start": 340.721,
+   "end": 450.003,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.5716941356658904,
+   "rerank_score": null
+}{
+   "chunk_id": 202,
+   "text": "It's not like a total halo business, hard as a low ops lessons, but there are aspects of it. You have substantial hardware involved. You have physical presence. You have feet on the street. You're in the four walls of a brick and mortar restaurant. So to your point, I actually think it's an important part of the story. On the below the line profitability dynamics, how has that evolved over time? What have been the big drivers there in terms of changing of the profitability profile? I think this is probably a part of the story that deserves more time. At Counter, we talk a lot about product and profits, companies that can lead with innovation, lead with product-led growth, but also do it with really high profitability. There aren't that many companies in the world that can do that. They can sustain really high growth with great profitability at the same time. Toast is definitely one of those companies. We talked about 97th percentile gross profit growth in public markets. Pretty exceptional. And management says they can maintain 20-plus percent growth for many years ahead. They just actually said that yesterday at a conference again at the same time. Margins have gone from minus 16% in 2022 to roughly 35% today, going to 40 plus percent, which management has said is a line in the sand and then they'll continue from there. There's a ton of operating leverage in this business where they've seen operating leverage is certainly in sales and marketing, where that number has come down a lot as a percent of revenue. G&A naturally as a company scales, you've seen G&A come down quite a bit as a percent of revenue. And in R&D, this has been a really interesting new lever for them as they've incorporated AI into the business internally. They've shipped more product in the last two years than I've ever seen them ship. We'll get into their AI offering.",
+   "start": 1111.105,
+   "end": 1219.913,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.5795713663101166,
+   "rerank_score": null
+}{
+   "chunk_id": 196,
+   "text": "Pretty much immediately, public companies' software multiples collapsed to three or four times revenue, basically where they are today. Everyone started asking the question, why would anyone pay for software when we have these free open source models on AWS? Sounds pretty familiar. That was a tough time to be a software investor in public markets. It took about 18 months, and when you fast forward to early 2016, The category killers kept putting up numbers. They kept innovating. Some of them were using open source internally. Most of them were. And the stocks went parabolic. There are some differences today, no question, but it rhymes with history. And I think at this point, we feel like we have a generational opportunity to invest in something like Toast, 25% plus compounder category killer at a gap net income multiple. When you talk about the transformation of the business, particularly when you mentioned from 2020 to today, what stands out the most in terms of that transformation and what's happened? This business has really evolved and at this point it's firing on all cylinders. I think the biggest evolution that you're seeing today is the result of a ton of hard work that happened three to five years ago. So if you go back to 2020, unprofitable business, Singletam really just focused on the core SMB restaurant customer in the US, you fast forward to today very profitable business, 35% EBITDA margins and growing with five tabs that the company has unlocked through a ton of innovation. So it started with SMB restaurants. They innovated starting five or six years ago, building products for the enterprise, building products for grocery stores. Now they're selling into liquor stores. They've started quietly selling into gas stations. That's a new opportunity. They're selling into hotels, FMB and retail and hotels.",
+   "start": 450.643,
+   "end": 563.843,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.5799319398443668,
+   "rerank_score": null
+}{
+   "chunk_id": 200,
+   "text": "The alternatives would be charging 3.25% is like where it's netting out for the restaurant. Is that 75 bips showing up there? It could, and there's also a mix of card present, card not present, mix of credit and debit actually matter when you get into the nitty gritty. But if you look at Square, for example, last I looked, Square was monetizing at something like a 1% gross profit net take rate across their business. Square has a nice business at the low end of the market for smaller merchants, but they're not offering a robust toast-like operating system on top of it. That's a pretty pure payments cop that you can look at, and they're monetizing at about 1% gross profit take rate. Understood. I'll let you continue with the software side of things. Yeah, on the software side, we talked about how robust the operating system is. Toast charges something like $300 a month to $500 a month to its customers to use the software suite as well. And depending on the customer, they might use different modules. They tend to bucket it into like good, better, best type of packaging. But at the end of the day, when you combine those two things together, The customer is paying something like $10,000 a year to toast on a total base of $1.3 million of revenue for the average customer. Hardware is a loss leader, so they do charge a nominal fee for their hardware when a customer starts up the business. There's kitchen display systems that connect the front of the back of house. There's toast go hardware. It has to be pretty advanced so it can deal with water, liquids, dropping, making sure it doesn't break. It's actually a complex engineering feat to build this kind of hardware. And then they make a little bit of money from lending to their customers to help them grow.",
+   "start": 897.569,
+   "end": 1004.65,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.5849047899246187,
+   "rerank_score": null
+}{
+   "chunk_id": 211,
+   "text": "But it's not just about the design. It's about the supply chain, the chips, making sure you have the right amount of inventory for your share gains. It's very, very complicated. And then the distribution is also really complicated. Toast has feet on the street in every major city in America. And those advocates walk into restaurants all day long, talk to owners, make sure they're being served properly by toast. It's a huge part of the story that's really hard to replicate. I would just give you an example. A year or two ago, a high-profile startup launched. It's supposed to be AI native serving the restaurant space. I think they thought probably with AI coding and all the advances going on with AI that they could copy Toast product and have something up and running pretty quickly. Fast forward to today. We aren't seeing them at all in the market. Last I heard, they extended their roadmap. They think it's going to be at least another two years before they have something that looks like toast. And then at that point, good luck building the supply chain, good luck building the hardware, and then you've got to get feet on the street in every major city in America and abroad. I think it's just way harder to disrupt this space because the moats are so powerful. We haven't talked about the management team or just culture within the business. Tell me a little bit about who's behind it and anything that's unique about the culture to the extent there is something unique. It's a really phenomenal culture. The restaurant business has had a lot of ups and downs over the years. It's a culture of people who are really resilient. They put the customer first. So it's product led, it's resilient, and it's customer first. And that's how I would describe their culture.",
+   "start": 2085.141,
+   "end": 2188.674,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.5849478469742397,
+   "rerank_score": null
+}{
+   "chunk_id": 197,
+   "text": "And then they've built an international team and an international product that's already live in the UK, Ireland, Australia, and Canada, and they'll keep adding markets from there. What you had five years ago was a single-tam, highly unprofitable hypergrowth business. Fast forward, this business has been a 97th percentile grower for the last three years in public markets. And that's against a lot of hypergrowth semiconductor names. 97th percentile grower while also taking margins from negative to substantially positive, while also innovating like crazy, expanding into a bunch of new markets, it's incredibly rare to find a 10x opportunity in public markets. We think we have one here just based on the current product offering. In terms of that offering and what they're doing for the customer, can you give that overview now in terms of everything that they're offering to their customer base, what's actually happening as they're selling in, what's on the other side of that offering? Toast is really the full operating system for their businesses. Think of it like Shopify for restaurants. It's the point of sale, digital ordering, payroll, automated inventory management real time reporting across multiple locations and then they have complex hardware we should get into the supply chain but they've built a really great hardware business as well and because it's a modern multi-tenant sass solution. They can code once and then deploy all the updates with new models with new technologies rapidly to the whole customer base. They've got a huge data advantage that's really important as they go build new products and that's already starting to show up in their offerings. And most people underestimate just how complex the customer workflow is at a restaurant. But most importantly, customers really love Toast. We do a ton of custom survey work on all our companies, some notable takeaways as to why customers love Toast so much.",
+   "start": 564.323,
+   "end": 682.799,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.5867208592129258,
+   "rerank_score": null
+}{
+   "chunk_id": 214,
+   "text": "We think there's a long runway to go just in that core SMB and certainly management thinks so as well. The interesting thing from there is that they've already innovated and built the product for four or five new Tams beyond that. And now they're actually in market and it's all about execution. They're in market with a grocery store offering for grocery, liquor, and gas stations. That market primarily is served by legacy technology where Toast has a huge right to win. Customers love the offering. We've talked to a lot of customers and we think there's a long runway there. They've started to win in hospitality. You saw a big win with Marriott. So they're winning Hotel Retail and FMB. That's a new offering in the last couple of years. Enterprise is really cooking, no pun intended, where they've won Applebee's and a handful of other really high-profile enterprise customers that would have seemed impossible many years ago. So for people who thought that the TAM for Toast would top out at $400,000 or $500,000 because they'll never get the enterprise, now the TAM in the US is actually bigger than the restaurant market. It's enterprise SMB plus grocery plus hospitality. And then they quietly built an international business where they're in the market in UK, Ireland, Canada, Australia. Management would tell you that those markets are growing faster than toast grew in the US when they started here. I was in London last week seeing companies. You're seeing toast all over the place. And I wasn't seeking them out. I was just walking into random restaurants and toast is all over the place. They're winning there. Big picture, Toast has 160,000 locations on its platform today. Even if you take out China, they have a 15 million location TAM globally, most of which is served by legacy technology.",
+   "start": 2412.578,
+   "end": 2525.353,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.5885127239532895,
+   "rerank_score": null
+}{
+   "chunk_id": 218,
+   "text": "Well, Sean, thank you again for coming on, sharing the knowledge, making it timely. This has been a true pleasure. Thanks so much, Pat. Awesome seeing you. To find more episodes of breakdowns ranging from Costco to Visa to Moderna, or to sign up for our weekly summary, check out joincolossus.com. That's J-O-I-N-C-O-L-O-S-S-U-S.com. The information contained in this podcast is for educational and informational purposes only and does not constitute and should not be construed as an offer to sell or a solicitation of an offer to buy any securities or related financial instruments. All opinions expressed by hosts and podcast guests are solely their own opinions and should not be viewed as definite or exhaustive. Hosts and podcast guests may maintain positions in the securities discussed on this podcast, and actual investment positions taken by podcast guests may vary from the conclusions discussed. There is no consideration given to the specific investment needs, objectives, or tolerances of any of the listeners, and accordingly, this material does not constitute a personal recommendation. The specific investment examples discussed during this podcast are included for illustrative purposes to indicate the podcast guests, potential investment processes, and strategies, and the types of companies that the podcast guest believes are representatives of a particular theme. It should not be assumed that any investment discussed herein has been or will be profitable or that recommendations made in the future will be profitable or will equal the investment performance of the specific investment examples discussed herein. Projections represent hypothetical performance and do not reflect the performance achieved or projected by the podcast guests. There is no guarantee that such performance will be achieved and actual results may vary.",
+   "start": 2855.58,
+   "end": 2933.536,
+   "podcast_id": 3,
+   "podcast_name": "Business Breakdowns",
+   "episode_id": 3,
+   "episode_title": "Toast: Sticky SaaS - [Business Breakdowns, EP.247]",
+   "score": 0.588998854160306,
+   "rerank_score": null
+}

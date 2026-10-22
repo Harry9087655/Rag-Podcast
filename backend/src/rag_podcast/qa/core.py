@@ -19,7 +19,9 @@ import json
 import logging
 import re
 import unicodedata
-from dataclasses import dataclass
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from typing import Literal
 
 from openai import AsyncOpenAI
 from sqlalchemy import select
@@ -90,6 +92,8 @@ class SourceRef:
     episode_id: int
     episode_title: str
     chunk_id: int | None = None
+    level: Literal["leaf", "parent"] = "leaf"
+    child_chunk_ids: list[int] = field(default_factory=list)
 
 
 @dataclass
@@ -142,6 +146,8 @@ def _to_source_refs(results: list[SearchResult]) -> list[SourceRef]:
             podcast_name=r.podcast_name,
             episode_id=r.episode_id,
             episode_title=r.episode_title,
+            level=r.level,
+            child_chunk_ids=r.child_chunk_ids,
         )
         for r in results
     ]
@@ -464,6 +470,7 @@ async def answer(
     podcast_id: int | None = None,
     history: list[dict[str, str]] | None = None,
     top_k: int | None = None,
+    on_arm: Callable[[Literal["full-context", "search"]], None] | None = None,
 ) -> AnswerResult:
     """Answer ``question`` from the podcast corpus and return the cited sources.
 
@@ -471,7 +478,9 @@ async def answer(
     the cleaned transcript fits the input budget, else in-episode search);
     ``podcast_id`` alone → cross-episode search; neither → whole-library
     search.  An empty context short-circuits to ``AnswerResult("", [])`` with
-    no LLM call.
+    no LLM call.  Optional synchronous ``on_arm`` observes the chosen arm once,
+    before its search/model work, even if that work fails.  Failures before
+    routing do not emit an arm; callback errors propagate to the caller.
     """
     if history is None:
         history = []
@@ -488,6 +497,8 @@ async def answer(
                 system_prompt=AGENTIC_SYSTEM_PROMPT,
             )
             if count_tokens(messages) <= _input_budget():
+                if on_arm is not None:
+                    on_arm("full-context")
                 logger.info(
                     "qa arm=full-context segments=%d", len(ctx.full_transcript)
                 )
@@ -499,6 +510,8 @@ async def answer(
                     sources=_sources_from_results(results, ctx),
                 )
 
+    if on_arm is not None:
+        on_arm("search")
     context_chunks = await _get_context(
         session,
         episode_id=episode_id,

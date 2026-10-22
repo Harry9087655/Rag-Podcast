@@ -6,6 +6,7 @@ __pycache__/
 *.pyc
 dist/
 .cache/
+.claude
 
 # QA eval annotation snapshots (DB dumps; regenerate with backend/scripts/dump_eval_inventory.py)
 evals/qa/_inventory/

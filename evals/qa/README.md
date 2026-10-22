@@ -48,7 +48,12 @@ uv run python scripts/verify_eval_gold.py
 | `required_claims` | 正确答案必须包含的原子事实，供 judge 判完整性 |
 | `conflicts` | 可选，已知冲突 |
 
-可用 tags：`single_fact` `definition` `parameter` `cross_document` `comparison` `multi_hop` `temporal` `table` `code` `ambiguity` `no_knowledge` `near_entity` `typo` `long_question`。
+可用 tags：`single_fact` `definition` `parameter` `cross_document` `cross_podcast` `comparison` `multi_hop` `temporal` `table` `code` `ambiguity` `no_knowledge` `near_entity` `typo` `long_question`。
+
+两个「跨文档」类别的区别：
+
+- `cross_document`：同一播客内、跨多个 episode 的证据组合，scope 用 `{"podcast_id": N}`。当前语料每个播客只有一集，暂未覆盖，等多集语料上线后再出题。
+- `cross_podcast`：跨不同播客的证据组合，scope 用 `{}`（全库检索）。
 
 ## scope 决定走哪条臂
 
@@ -58,7 +63,7 @@ uv run python scripts/verify_eval_gold.py
 |---|---|
 | `{"episode_id": N}` | full-context（transcript 放得进 input budget 时） |
 | `{"podcast_id": N}` | search，限定在该播客 |
-| `{}` | search，全库 |
+| `{}` | search，全库（跨播客） |
 
 当前语料每集都放得进 budget，所以**写 `{episode_id}` 就一定走 full-context**。要测 search 臂，用 `{podcast_id}` 或 `{}`。每个播客目前只有一集，`{podcast_id}` 等于在这一集里检索。
 
@@ -93,4 +98,5 @@ def dataset_fingerprint(dataset: dict) -> str:
 ## 已知缺口
 
 - **`table`、`code` 没有覆盖**：当前语料是财经和访谈播客，没有表格或代码，留到受控语料阶段补。
+- **`cross_document`（同播客跨集）没有覆盖**：当前语料每个播客只有一集，跨 episode 的题目要等多集播客上线后再补。现有跨播客题目用 `cross_podcast` 标记。
 - **ASR 转写错误**：英文人名拼法不一致（如 Kalachi/Calacci、Thelot/Tullo、Mamdani/Mondani），中文有同音错字（如「九七」应为「久期」）。出题时选原文表述清楚的事实。

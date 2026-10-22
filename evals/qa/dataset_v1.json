@@ -332,8 +332,8 @@
       "required_claims": ["长期国债与A股整体的相关系数为-0.54", "两者是负相关"]
     },
     {
-      "id": "cross_document_ai_usage_studies",
-      "tags": ["cross_document", "multi_hop"],
+      "id": "cross_podcast_ai_usage_studies",
+      "tags": ["cross_podcast", "multi_hop"],
       "critical": false,
       "question": "Two podcasts discussed large-scale studies of how people actually use AI. What did Google's AI Atlas report find about how widely and how deeply occupations use AI, and how many people did the Anthropic survey cited on the a16z Show cover?",
       "expected_arm": "search",
@@ -344,8 +344,8 @@
       "required_claims": ["68% of occupations show AI use", "AI is involved in about 21% of tasks on average", "Only 3% of occupations use AI in more than 75% of tasks", "The Anthropic survey covered 85,000 people"]
     },
     {
-      "id": "cross_document_royalty_vs_take_rate",
-      "tags": ["cross_document", "comparison"],
+      "id": "cross_podcast_royalty_vs_take_rate",
+      "tags": ["cross_podcast", "comparison"],
       "critical": false,
       "question": "How does the cut a franchisor like McDonald's takes from its franchisees compare with the net payments take rate Toast earns on a restaurant's orders?",
       "expected_arm": "search",

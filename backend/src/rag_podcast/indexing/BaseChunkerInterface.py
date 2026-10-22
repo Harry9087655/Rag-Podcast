@@ -77,3 +77,12 @@ class Chunker(Protocol):
             ChunkingError: if the segments cannot be chunked as given.
         """
         ...
+
+    def count_tokens(self, text: str) -> int:
+        """Token count of *text* under the chunker's tokenizer.
+
+        Excludes the tokenizer's special tokens (``add_special_tokens=False``)
+        — the same unit ``build_chunks`` measures its bounds in. Used by the
+        parent grouper to accumulate leaf token counts.
+        """
+        ...

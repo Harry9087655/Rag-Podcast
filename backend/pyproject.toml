@@ -17,6 +17,7 @@ dependencies = [
   "requests>=2.34.2",
   "tokenizers>=0.22.2",
   "openai>=3.8.0",
+  "tiktoken"
 ]
 
 [project.optional-dependencies]
@@ -40,6 +41,7 @@ dev = [
     "types-requests>=2.33.0.20260712",
     "pytest>=8.0",
     "pytest-asyncio>=0.24",
+    "jsonschema>=4.26.0",
 ]
 
 [tool.pytest.ini_options]

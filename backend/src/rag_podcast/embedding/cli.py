@@ -66,6 +66,11 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Reset FAILED episodes to PENDING before starting.",
     )
+    parser.add_argument(
+        "--reindex",
+        action="store_true",
+        help="Reset DONE episodes to PENDING before starting (full rebuild).",
+    )
     return parser.parse_args(argv)
 
 
@@ -88,6 +93,7 @@ async def _main() -> None:
         once=args.once,
         episode_id=args.episode_id,
         retry_failed=args.retry_failed,
+        reindex=args.reindex,
     )
 
 

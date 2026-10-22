@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     llm_base_url: str
     llm_api_key: str
     llm_model: str
+    evaluator_model: str | None = None
 
     # WhisperX transcription settings
     whisperx_model: str = "small"

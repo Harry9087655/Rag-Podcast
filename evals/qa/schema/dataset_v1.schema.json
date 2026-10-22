@@ -86,6 +86,7 @@
         "definition",
         "parameter",
         "cross_document",
+        "cross_podcast",
         "comparison",
         "multi_hop",
         "temporal",

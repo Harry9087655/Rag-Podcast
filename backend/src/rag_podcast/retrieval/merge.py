@@ -56,6 +56,7 @@ def _parent_result(parent: ParentChunk, members: list[SearchResult]) -> SearchRe
         score=_inherit_score([m.score for m in members]),
         level="parent",
         merged_child_count=len(members),
+        child_chunk_ids=[m.chunk_id for m in members],
     )
 
 

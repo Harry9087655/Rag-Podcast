@@ -1,0 +1,14 @@
+{
+  "critical_no_regression": true,
+  "required_provenance": ["live"],
+  "k": 5,
+  "metric_gates": [
+    {"metric": "case_pass_rate", "minimum": 0.5, "max_regression": 0.15},
+    {"metric": "citation_hit", "minimum": 0.5, "max_regression": 0.15},
+    {"metric": "citation_precision", "minimum": 0.5, "max_regression": 0.15},
+    {"metric": "recall@5", "minimum": 0.4, "max_regression": 0.15},
+    {"metric": "precision@5", "minimum": 0.4, "max_regression": 0.15},
+    {"metric": "gold_chunk_coverage", "minimum": 0.6, "max_regression": 0.15},
+    {"metric": "provider_failure_rate", "maximum": 0.3}
+  ]
+}

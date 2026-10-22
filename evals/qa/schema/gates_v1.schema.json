@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QA deterministic gate policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["critical_no_regression", "required_provenance", "k", "metric_gates"],
+  "properties": {
+    "critical_no_regression": {"type": "boolean", "const": true},
+    "required_provenance": {"type": "array", "const": ["live"]},
+    "k": {"type": "integer", "minimum": 1},
+    "metric_gates": {"type": "array", "items": {"$ref": "#/$defs/metricGate"}}
+  },
+  "$defs": {
+    "score": {"type": "number", "minimum": 0, "maximum": 1},
+    "nullableScore": {"anyOf": [{"$ref": "#/$defs/score"}, {"type": "null"}]},
+    "metricGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric"],
+      "properties": {
+        "metric": {
+          "type": "string",
+          "not": {"pattern": "\\s"},
+          "anyOf": [
+            {"enum": ["case_pass_rate", "citation_hit", "citation_precision", "gold_chunk_coverage", "provider_failure_rate"]},
+            {"pattern": "^(recall|precision|mrr|ndcg)@[1-9][0-9]*$"}
+          ]
+        },
+        "minimum": {"$ref": "#/$defs/nullableScore"},
+        "maximum": {"$ref": "#/$defs/nullableScore"},
+        "max_regression": {"$ref": "#/$defs/nullableScore"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"metric": {"const": "provider_failure_rate"}}},
+          "then": {
+            "required": ["maximum"],
+            "properties": {"maximum": {"$ref": "#/$defs/score"}, "minimum": {"type": "null"}}
+          },
+          "else": {
+            "required": ["minimum"],
+            "properties": {"minimum": {"$ref": "#/$defs/score"}, "maximum": {"type": "null"}}
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "metric": {
+                "anyOf": [
+                  {"enum": ["case_pass_rate", "citation_hit", "citation_precision", "gold_chunk_coverage"]},
+                  {"pattern": "^(recall|precision)@[1-9][0-9]*$"}
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": ["max_regression"],
+            "properties": {"max_regression": {"$ref": "#/$defs/score"}}
+          }
+        }
+      ]
+    }
+  }
+}

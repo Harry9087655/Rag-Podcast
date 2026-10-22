@@ -38,3 +38,9 @@ class SimilarityBiasedChunker:
             "SimilarityBiasedChunker is a Phase 2 placeholder; "
             "use strategy='size_based' for now."
         )
+
+    def count_tokens(self, text: str) -> int:
+        raise NotImplementedError(
+            "SimilarityBiasedChunker is a Phase 2 placeholder; "
+            "use strategy='size_based' for now."
+        )

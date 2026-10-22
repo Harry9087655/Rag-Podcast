@@ -13,4 +13,5 @@ class Base(DeclarativeBase):
 # key could not resolve at flush time ("could not find table 'podcast'").
 from .podcast import Podcast  # noqa: F401,E402
 from .episode import Episode  # noqa: F401,E402
+from .parent_chunk import ParentChunk  # noqa: F401,E402
 from .chunk import Chunk  # noqa: F401,E402

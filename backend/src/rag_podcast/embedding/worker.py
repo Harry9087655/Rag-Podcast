@@ -20,6 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from ..cleaning import clean_words
 from ..config import settings
 from ..indexing.BaseChunkerInterface import Chunker
+from ..indexing.parent_grouper import group_into_parents
 from ..models.episode import Episode, IndexStatus, TranscriptStatus
 from .embedder import embed_batch
 from .store import replace_chunks
@@ -71,6 +72,29 @@ async def reset_failed(session: AsyncSession) -> int:
     return count
 
 
+async def reset_done(session: AsyncSession) -> int:
+    """Reset DONE episodes back to PENDING for a full reindex.
+
+    The migration path for a re-chunk/re-embed (09-17 leaf/parent rework): every
+    already-indexed episode must be rebuilt so its chunks — and now parents —
+    reflect the new scheme. Runs once before the worker loop; the worker then
+    re-indexes each as if new.
+    """
+    result = await session.execute(
+        update(Episode)
+        .where(Episode.index_status == IndexStatus.DONE)
+        .values(index_status=IndexStatus.PENDING)
+    )
+    await session.commit()
+    count = result.rowcount
+    if count:
+        logger.warning(
+            "Reset %d episode(s) from DONE back to PENDING (full reindex).",
+            count,
+        )
+    return count
+
+
 async def poll_ready(
     session: AsyncSession, episode_id: int | None = None
 ) -> Episode | None:
@@ -108,20 +132,22 @@ async def claim_episode(session: AsyncSession, episode_id: int) -> Episode | Non
     return result.scalar_one_or_none()
 
 
-def resolve_token_tier(duration_seconds: float) -> tuple[int, int, int]:
-    """Pick ``(min, max, desired)`` token bounds for an episode's duration.
+def resolve_token_tier(
+    duration_seconds: float,
+) -> tuple[dict[str, int], dict[str, int]]:
+    """Pick ``(leaf, parent)`` token bounds for an episode's duration.
 
     First-match-wins in ``settings.audio_tier`` definition order (Short →
     Medium → Long); ``Long``'s ``max_episode_duration_seconds`` is ``inf``, so
-    it is the catch-all and must stay last.
+    it is the catch-all and must stay last. Each half is the leaf's
+    ``{min, desired, max}`` followed by the parent's ``{desired, max}`` (no
+    parent min — a parent has no floor).
     """
     for cfg in settings.audio_tier.values():
         if duration_seconds <= cfg["max_episode_duration_seconds"]:
-            return (
-                int(cfg["min_chunk_tokens"]),
-                int(cfg["max_chunk_tokens"]),
-                int(cfg["desired_chunk_tokens"]),
-            )
+            leaf = {k: int(v) for k, v in cfg["leaf"].items()}
+            parent = {k: int(v) for k, v in cfg["parent"].items()}
+            return leaf, parent
     raise RuntimeError("no audio tier matched")  # unreachable: Long is inf
 
 
@@ -150,7 +176,7 @@ async def index_episode(
         episode.index_status = IndexStatus.FAILED
         await session.commit()
         return
-
+    duration = episode.duration_seconds
     cleaned = clean_words(segments, episode.language)
     if not cleaned:
         logger.error(
@@ -163,39 +189,50 @@ async def index_episode(
 
     # Duration from the cleaned segments, not episode.duration_seconds (which
     # can be None).
-    duration = cleaned[-1]["end"] - cleaned[0]["start"]
-    min_tokens, max_tokens, desired_tokens = resolve_token_tier(duration)
-    spans = chunker.build_chunks(
+    
+    leaf_bounds, parent_bounds = resolve_token_tier(duration)
+    leaves = chunker.build_chunks(
         cleaned,
-        min_tokens=min_tokens,
-        max_tokens=max_tokens,
-        desired_tokens=desired_tokens,
         min_duration=settings.chunk_min_duration_seconds,
         max_duration=settings.chunk_max_duration_seconds,
         language=episode.language,
+        **leaf_bounds,
     )
-    if not spans:
+    if not leaves:
         logger.error("Episode id=%s produced no chunks — cannot index.", episode.id)
         episode.index_status = IndexStatus.FAILED
         await session.commit()
         return
 
-    logger.info("Indexing episode id=%s — %d chunks.", episode.id, len(spans))
+    parents = group_into_parents(
+        leaves,
+        count=chunker.count_tokens,
+        max_duration=settings.chunk_max_duration_seconds,
+        language=episode.language,
+        **parent_bounds,
+    )
+
+    logger.info(
+        "Indexing episode id=%s — %d chunks, %d parents.",
+        episode.id,
+        len(leaves),
+        len(parents),
+    )
 
     try:
         vectors = await embed_batch(
-            [span.text for span in spans],
+            [leaf.text for leaf in leaves],
             base_url=settings.embedding_base_url,
             api_key=settings.embedding_api_key,
             model=settings.embedding_model,
             batch_size=settings.embedding_batch_size,
             timeout=settings.embedding_timeout_seconds,
         )
-        await replace_chunks(session, episode, spans, vectors)  # no commit
+        await replace_chunks(session, episode, leaves, vectors, parents)  # no commit
         episode.index_status = IndexStatus.DONE
         await session.commit()  # single commit: DELETE + INSERT + done (R2)
         logger.info(
-            "Episode id=%s indexed — %d chunks stored.", episode.id, len(spans)
+            "Episode id=%s indexed — %d chunks stored.", episode.id, len(leaves)
         )
     except Exception:
         logger.exception("Indexing failed for episode id=%s", episode.id)
@@ -216,28 +253,32 @@ async def run_worker(
     once: bool = False,
     episode_id: int | None = None,
     retry_failed: bool = False,
+    reindex: bool = False,
 ) -> None:
     """Main worker loop.
 
-    1. Reset PROCESSING (crash recovery) and, with ``retry_failed``, FAILED →
-       PENDING.
+    1. Reset PROCESSING (crash recovery); with ``retry_failed``, FAILED →
+       PENDING; with ``reindex``, DONE → PENDING (full rebuild).
     2. Poll for ready episodes and index them one at a time.
     3. When the queue is empty: return if ``once``, else sleep
        ``poll_interval`` seconds.
     """
     logger.info(
         "Embedding worker starting — poll_interval=%ds once=%s episode_id=%s "
-        "retry_failed=%s",
+        "retry_failed=%s reindex=%s",
         poll_interval,
         once,
         episode_id,
         retry_failed,
+        reindex,
     )
 
     async with session_factory() as session:
         await reset_stale_processing(session)
         if retry_failed:
             await reset_failed(session)
+        if reindex:
+            await reset_done(session)
 
     try:
         while True:

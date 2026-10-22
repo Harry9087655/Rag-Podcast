@@ -11,7 +11,7 @@ Design contract: .trellis/tasks/09-12-retrieval/design.md
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Literal, Protocol
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -46,6 +46,7 @@ class SearchResult:
     parent_id: int | None = None
     level: Literal["leaf", "parent"] = "leaf"
     merged_child_count: int = 0
+    child_chunk_ids: list[int] = field(default_factory=list)
 
     @property
     def effective_score(self) -> float:
