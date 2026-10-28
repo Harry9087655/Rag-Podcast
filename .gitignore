@@ -10,6 +10,7 @@ dist/
 
 # QA eval annotation snapshots (DB dumps; regenerate with backend/scripts/dump_eval_inventory.py)
 evals/qa/_inventory/
+evals/qa/runs/
 
 # trellis folder
 .trellis/
